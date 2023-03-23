@@ -33,11 +33,11 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
-import com.chatty.compose.ui.components.AppScreen
-import com.chatty.compose.ui.components.HeightSpacer
-import com.chatty.compose.ui.utils.LocalNavController
-import com.chatty.compose.ui.utils.popUpAllBackStackEntry
 import com.example.intelligent_shopping_cart.R
+import com.example.intelligent_shopping_cart.ui.components.AppScreen
+import com.example.intelligent_shopping_cart.ui.components.HeightSpacer
+import com.example.intelligent_shopping_cart.ui.utils.LocalNavController
+import com.example.intelligent_shopping_cart.ui.utils.popUpAllBackStackEntry
 
 @OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class)
 @Composable

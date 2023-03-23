@@ -1,4 +1,4 @@
-package com.chatty.compose.bean
+package com.example.intelligent_shopping_cart.bean
 
 import android.os.Parcel
 import android.os.Parcelable
@@ -6,13 +6,13 @@ import androidx.compose.runtime.Stable
 import java.util.*
 
 
-@Stable
-data class MessageItemData(
-    val userProfile: UserProfileData,
-    val lastMsg: String,
-    val unreadCount: Int = 0,
-    val mid: String = UUID.randomUUID().toString(),
-)
+//@Stable
+//data class MessageItemData(
+//    val userProfile: UserProfileData,
+//    val lastMsg: String,
+//    val unreadCount: Int = 0,
+//    val mid: String = UUID.randomUUID().toString(),
+//)
 
 @Stable
 data class UserProfileData(

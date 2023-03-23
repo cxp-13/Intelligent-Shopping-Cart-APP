@@ -1,4 +1,4 @@
-package com.chatty.compose.ui.components
+package com.example.intelligent_shopping_cart.ui.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row

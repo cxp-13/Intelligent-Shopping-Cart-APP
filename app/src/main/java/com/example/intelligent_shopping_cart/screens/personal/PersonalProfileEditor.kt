@@ -19,10 +19,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.chatty.compose.ui.components.*
-import com.chatty.compose.ui.utils.LocalNavController
 import com.example.intelligent_shopping_cart.R
+import com.example.intelligent_shopping_cart.ui.components.*
 import com.example.intelligent_shopping_cart.ui.theme.green
+import com.example.intelligent_shopping_cart.ui.utils.LocalNavController
 
 
 @Preview
@@ -125,7 +125,10 @@ fun ProfileInputField() {
 fun QRCodeDisplay() {
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Image(painter = painterResource(id = R.drawable.qrcode), contentDescription = "qr_code")
+            Image(
+                painter = painterResource(id = R.drawable._20230320111907),
+                contentDescription = "qr_code"
+            )
             HeightSpacer(value = 5.dp)
             Text(text = "使用扫一扫添加我", color = MaterialTheme.colorScheme.onBackground)
         }

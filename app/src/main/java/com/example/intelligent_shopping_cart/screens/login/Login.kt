@@ -1,8 +1,11 @@
 package com.chatty.compose.screens.login
 
+import android.util.Log
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
@@ -19,12 +22,12 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.chatty.compose.ui.components.AppScreen
-import com.chatty.compose.ui.components.CenterRow
-import com.chatty.compose.ui.components.HeightSpacer
-import com.chatty.compose.ui.components.WidthSpacer
-import com.chatty.compose.ui.utils.LocalNavController
 import com.example.intelligent_shopping_cart.R
+import com.example.intelligent_shopping_cart.ui.components.AppScreen
+import com.example.intelligent_shopping_cart.ui.components.CenterRow
+import com.example.intelligent_shopping_cart.ui.components.HeightSpacer
+import com.example.intelligent_shopping_cart.ui.components.WidthSpacer
+import com.example.intelligent_shopping_cart.ui.utils.LocalNavController
 
 
 @OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class)
@@ -39,6 +42,24 @@ fun Login() {
     var password by rememberSaveable { mutableStateOf("") }
     var passwordHidden by rememberSaveable { mutableStateOf(true) }
 
+
+    val loginBtnInteractionSource = remember {
+        MutableInteractionSource()
+    }
+
+    val loginBtnIsPressed by loginBtnInteractionSource.collectIsPressedAsState()
+
+
+    LaunchedEffect(key1 = loginBtnInteractionSource.interactions, block = {
+        loginBtnInteractionSource.interactions.collect {
+            Log.d("test", "Login: $it")
+        }
+    })
+
+
+    val coroutineScope = rememberCoroutineScope()
+
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -51,7 +72,7 @@ fun Login() {
                 .padding(horizontal = 35.dp),
         ) {
             Text(
-                text = "Chatty",
+                text = "IntelligentShoppingCart",
                 fontSize = 64.sp,
                 color = Color(0xFF0E4A86),
                 fontFamily = FontFamily.Cursive
@@ -123,10 +144,15 @@ fun Login() {
                     .fillMaxWidth()
                     .height(48.dp),
                 elevation = ButtonDefaults.buttonElevation(defaultElevation = 10.dp),
-                shape = RoundedCornerShape(8.dp)
+                shape = RoundedCornerShape(8.dp),
+                interactionSource = loginBtnInteractionSource
             ) {
-                Icon(painterResource(R.drawable.login), null)
-                WidthSpacer(5.dp)
+
+                AnimatedVisibility(visible = loginBtnIsPressed) {
+                    Icon(painterResource(R.drawable.login), null)
+                    WidthSpacer(5.dp)
+                }
+
                 Text("登入")
             }
             HeightSpacer(value = 15.dp)

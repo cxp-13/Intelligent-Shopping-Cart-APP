@@ -1,12 +1,12 @@
-package com.chatty.compose.ui.components
+package com.example.intelligent_shopping_cart.ui.components
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import com.chatty.compose.screens.drawer.PersonalProfile
 import com.example.intelligent_shopping_cart.screens.main.Main
+import com.example.intelligent_shopping_cart.screens.personal.PersonalProfile
 import com.example.intelligent_shopping_cart.screens.shopping_cart.ShoppingCart
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
@@ -17,6 +17,8 @@ import kotlinx.coroutines.launch
 @Composable
 fun AppScaffold() {
 
+    val snackbarHostState = remember { SnackbarHostState() }
+//    val scaffoldState = rememberScaffoldState()
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val pagerState = rememberPagerState()
     val scope = rememberCoroutineScope()
@@ -24,12 +26,18 @@ fun AppScaffold() {
 
     ModalNavigationDrawer(
         drawerContent = {
-            PersonalProfile()
+            ModalDrawerSheet {
+                PersonalProfile(snackbarHostState)
+            }
+
         },
         drawerState = drawerState,
         modifier = Modifier.navigationBarsPadding()
     ) {
         Scaffold(
+            snackbarHost = {
+                SnackbarHost(hostState = snackbarHostState)
+            },
             bottomBar = {
                 MyBottomNavigationBar(
                     selectedScreen = selectedScreen,
@@ -54,7 +62,7 @@ fun AppScaffold() {
             }
         }
     }
-
+//更新当前选中的page下标
     LaunchedEffect(pagerState) {
         snapshotFlow { pagerState.currentPage }.collect { page ->
             selectedScreen = page

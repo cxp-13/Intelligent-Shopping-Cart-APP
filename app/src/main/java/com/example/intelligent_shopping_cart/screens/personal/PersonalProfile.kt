@@ -1,4 +1,4 @@
-package com.chatty.compose.screens.drawer
+package com.example.intelligent_shopping_cart.screens.personal
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -11,6 +11,7 @@ import androidx.compose.material.icons.rounded.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -26,21 +27,21 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
-import com.chatty.compose.bean.UserProfileData
-import com.chatty.compose.ui.components.AppScreen
-import com.chatty.compose.ui.components.CenterRow
-import com.chatty.compose.ui.components.HeightSpacer
-import com.chatty.compose.ui.utils.LocalNavController
-
-
 import com.example.intelligent_shopping_cart.R
-import com.example.intelligent_shopping_cart.bean.friends
+import com.example.intelligent_shopping_cart.bean.UserProfileData
+import com.example.intelligent_shopping_cart.ui.components.AppScreen
+import com.example.intelligent_shopping_cart.ui.components.CenterRow
+import com.example.intelligent_shopping_cart.ui.components.HeightSpacer
+import com.example.intelligent_shopping_cart.ui.utils.LocalNavController
+import kotlinx.coroutines.launch
 
 
 @Composable
-fun PersonalProfile() {
+fun PersonalProfile(snackbarHostState: SnackbarHostState) {
+
     Column(
         modifier = Modifier
+
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background),
     ) {
@@ -57,7 +58,8 @@ fun PersonalProfile() {
             PersonalProfileHeader()
         }
         HeightSpacer(value = 10.dp)
-        PersonalProfileDetail()
+//        中间的用户信息
+        PersonalProfileDetail(snackbarHostState)
         Box(
             modifier = Modifier.fillMaxHeight(),
             contentAlignment = Alignment.BottomCenter
@@ -65,11 +67,22 @@ fun PersonalProfile() {
             BottomSettingIcons()
         }
     }
+
+
 }
 
 
 fun getCurrentLoginUserProfile(): UserProfileData {
-    return friends[0]
+    return UserProfileData(
+        R.drawable.ava1,
+        "chen xian ping",
+        "2b吧 哥们",
+        gender = "男",
+        age = 22,
+        phone = "13259934802",
+        email = "1695219012@qq.com",
+        uid = "1024"
+    )
 }
 
 @Composable
@@ -116,7 +129,7 @@ fun PersonalProfileHeader() {
                 .constrainAs(desTextRef) {
                     top.linkTo(usernameTextRef.bottom, 10.dp)
                     start.linkTo(portraitImageRef.end, 10.dp)
-                    end.linkTo(parent.end)
+//                    end.linkTo(parent.end)
                     width = Dimension.preferredWrapContent
                 }
         )
@@ -126,10 +139,24 @@ fun PersonalProfileHeader() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PersonalProfileDetail() {
-    var currentUser = getCurrentLoginUserProfile()
+fun PersonalProfileDetail(snackbarHostState: SnackbarHostState) {
+    var userProfileData = getCurrentLoginUserProfile()
     val navController = LocalNavController.current
 //    val chattyColors = MaterialTheme.chattyColors
+    val scope = rememberCoroutineScope()
+
+
+//  给用户信息的枚举类赋值上当前用户的信息
+    val personalProfileItems = remember(userProfileData) {
+        PersonalProfileItem.UID.badge = userProfileData.uid
+        PersonalProfileItem.SEX.badge = userProfileData.gender.toString()
+        PersonalProfileItem.AGE.badge = userProfileData.age.toString()
+        PersonalProfileItem.PHONE.badge = userProfileData.phone.toString()
+        PersonalProfileItem.EMAIL.badge = userProfileData.email.toString()
+        PersonalProfileItem.values()
+    }
+
+
     Column(
         modifier = Modifier
             .padding(horizontal = 12.dp)
@@ -152,7 +179,8 @@ fun PersonalProfileDetail() {
 //            }
         }
         Spacer(Modifier.padding(vertical = 12.dp))
-        PersonalProfileItem.values().forEach { item ->
+
+        personalProfileItems.forEach { item ->
             NavigationDrawerItem(
                 label = {
                     Text(item.label, style = MaterialTheme.typography.titleMedium)
@@ -173,25 +201,41 @@ fun PersonalProfileDetail() {
                         PersonalProfileItem.PHONE -> navController.navigate("${AppScreen.profileEdit}/phone")
                         PersonalProfileItem.EMAIL -> navController.navigate("${AppScreen.profileEdit}/email")
                         PersonalProfileItem.QRCODE -> navController.navigate("${AppScreen.profileEdit}/qrcode")
+                        PersonalProfileItem.UID -> scope.launch {
+//                            scaffoldState.snackbarHostState.showSnackbar(userProfileData.uid)
+                            snackbarHostState.showSnackbar(userProfileData.uid)
+                        }
                     }
                 }
             )
             HeightSpacer(value = 8.dp)
         }
+
+
     }
 }
 
 enum class PersonalProfileItem(
     val label: String,
-    val badge: String?,
+    var badge: String,
     val icon: ImageVector
 ) {
-    SEX("性别", "男", Icons.Rounded.Male),
-    AGE("年龄", "19", Icons.Rounded.Circle),
-    PHONE("手机号", "未知", Icons.Rounded.Call),
-    EMAIL("电子邮箱", "未知", Icons.Rounded.Mail),
-    QRCODE("二维码", null, Icons.Rounded.QrCode)
+    UID("ID号", "-1", Icons.Rounded.Android),
+    SEX("性别", "null", Icons.Rounded.Male),
+    AGE("年龄", "-1", Icons.Rounded.Circle),
+    PHONE("手机号", "-1", Icons.Rounded.Call),
+    EMAIL("电子邮箱", "xxxxxxxx@qq.com", Icons.Rounded.Mail),
+    QRCODE("二维码", "null", Icons.Rounded.QrCode)
 }
+
+
+//val personalProfileItemIcon = listOf(
+//    Icons.Rounded.Male,
+//    Icons.Rounded.Circle,
+//    Icons.Rounded.Call,
+//    Icons.Rounded.Mail,
+//    Icons.Rounded.QrCode
+//)
 
 @Composable
 fun BottomSettingIcons() {

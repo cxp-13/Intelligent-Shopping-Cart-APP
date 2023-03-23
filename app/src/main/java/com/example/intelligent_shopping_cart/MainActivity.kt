@@ -12,10 +12,10 @@ import androidx.navigation.navArgument
 import com.chatty.compose.screens.drawer.PersonalProfileEditor
 import com.chatty.compose.screens.login.Login
 import com.chatty.compose.screens.register.Register
-import com.chatty.compose.ui.components.AppScaffold
-import com.chatty.compose.ui.components.AppScreen
-import com.chatty.compose.ui.utils.LocalNavController
+import com.example.intelligent_shopping_cart.ui.components.AppScaffold
+import com.example.intelligent_shopping_cart.ui.components.AppScreen
 import com.example.intelligent_shopping_cart.ui.theme.Intelligent_shopping_cartTheme
+import com.example.intelligent_shopping_cart.ui.utils.LocalNavController
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController

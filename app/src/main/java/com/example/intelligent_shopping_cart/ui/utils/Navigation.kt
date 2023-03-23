@@ -1,4 +1,4 @@
-package com.chatty.compose.ui.utils
+package com.example.intelligent_shopping_cart.ui.utils
 
 import android.util.Log
 import androidx.compose.runtime.compositionLocalOf
