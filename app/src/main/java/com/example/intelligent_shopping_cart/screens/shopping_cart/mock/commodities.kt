@@ -14,7 +14,7 @@ val commodities = listOf(
         "10斤装",
         "2021-12-31 23:59:59.999",
         "新鲜的苹果",
-        listOf(),
+        appraises,
         2
     ),
 
@@ -28,7 +28,7 @@ val commodities = listOf(
         "1kg装",
         "2021-12-31 23:59:59.999",
         "甜美可口的香蕉",
-        listOf(),
+        appraises,
         1
     ),
 // 生成一个名为"牛奶"，价格为10元，数量为3瓶的Commodity对象
@@ -41,7 +41,7 @@ val commodities = listOf(
         "500ml装",
         "2022-06-30 23:59:59.999",
         "营养丰富的牛奶",
-        listOf(),
+        appraises,
         3
     )
 )

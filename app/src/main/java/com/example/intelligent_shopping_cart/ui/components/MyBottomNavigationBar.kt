@@ -59,5 +59,6 @@ object AppScreen {
     const val main = "main"
     const val register = "register"
     const val shoppingCart = "shoppingCart"
-    const val profileEdit = "profile_edit"
+    const val profileEdit = "profileEdit"
+    const val commodityList = "commodityList"
 }
