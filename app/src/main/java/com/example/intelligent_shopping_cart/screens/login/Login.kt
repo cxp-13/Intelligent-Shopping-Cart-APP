@@ -16,12 +16,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.example.intelligent_shopping_cart.R
 import com.example.intelligent_shopping_cart.ui.components.AppScreen
 import com.example.intelligent_shopping_cart.ui.components.CenterRow
@@ -72,10 +70,8 @@ fun Login() {
                 .padding(horizontal = 35.dp),
         ) {
             Text(
-                text = "IntelligentShoppingCart",
-                fontSize = 64.sp,
-                color = Color(0xFF0E4A86),
-                fontFamily = FontFamily.Cursive
+                text = "ShoppingCart",
+                style = MaterialTheme.typography.displaySmall
             )
             HeightSpacer(value = 20.dp)
             OutlinedTextField(
@@ -135,6 +131,7 @@ fun Login() {
             )
             HeightSpacer(value = 20.dp)
             Button(
+                colors = ButtonDefaults.buttonColors(),
                 onClick = {
                     navController.navigate(AppScreen.main) {
                         popUpTo(AppScreen.login) { inclusive = true }
@@ -144,15 +141,13 @@ fun Login() {
                     .fillMaxWidth()
                     .height(48.dp),
                 elevation = ButtonDefaults.buttonElevation(defaultElevation = 10.dp),
-                shape = RoundedCornerShape(8.dp),
+                shape = MaterialTheme.shapes.medium,
                 interactionSource = loginBtnInteractionSource
             ) {
-
                 AnimatedVisibility(visible = loginBtnIsPressed) {
                     Icon(painterResource(R.drawable.login), null)
                     WidthSpacer(5.dp)
                 }
-
                 Text("登入")
             }
             HeightSpacer(value = 15.dp)

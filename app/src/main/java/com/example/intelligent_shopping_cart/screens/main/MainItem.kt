@@ -5,8 +5,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -24,6 +24,8 @@ fun MainItem(commodityType: CommodityType) {
     val navController = LocalNavController.current
 
     Surface(
+        color = MaterialTheme.colorScheme.primaryContainer,
+        contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
         shadowElevation = 5.dp,
         shape = MaterialTheme.shapes.small,
         modifier = Modifier
@@ -39,7 +41,7 @@ fun MainItem(commodityType: CommodityType) {
                 contentDescription = null
             )
             WidthSpacer(value = 10.dp)
-            Text(text = commodityType.name)
+            Text(text = commodityType.name, style = MaterialTheme.typography.bodyLarge)
         }
     }
 

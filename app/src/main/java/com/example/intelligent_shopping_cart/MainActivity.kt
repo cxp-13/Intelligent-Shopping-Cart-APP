@@ -12,6 +12,7 @@ import androidx.navigation.navArgument
 import com.chatty.compose.screens.drawer.PersonalProfileEditor
 import com.chatty.compose.screens.login.Login
 import com.chatty.compose.screens.register.Register
+import com.example.intelligent_shopping_cart.screens.commodity_details.CommodityDetailPage
 import com.example.intelligent_shopping_cart.screens.commodity_list.CommodityList
 import com.example.intelligent_shopping_cart.screens.shopping_cart.mock.commodities
 import com.example.intelligent_shopping_cart.ui.components.AppScaffold
@@ -89,6 +90,20 @@ fun ShoppingCartNavHost(navController: NavHostController) {
             var commodityName = backStackEntry.arguments?.getString("name")!!
             CommodityList(commodities)
         }
+        composable(
+            route = "${AppScreen.commodityDetail}/{commodityName}",
+            arguments = listOf(navArgument("commodityName") {
+                type = NavType.StringType
+            }),
+            enterTransition = null,
+            exitTransition = null
+        ) { backStackEntry ->
+            var commodityName = backStackEntry.arguments?.getString("commodityName")!!
+            CommodityDetailPage(commodities.find {
+                it.name == commodityName
+            } ?: commodities[0])
+        }
+
     }
 }
 

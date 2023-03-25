@@ -21,12 +21,11 @@ fun MainTopBar(
 ) {
     val scope = rememberCoroutineScope()
 //    val chattyColors = LocalChattyColors.current
-
     CenterAlignedTopAppBar(
         title = {
             Text(
                 "首页",
-                color = MaterialTheme.colorScheme.tertiary
+                style = MaterialTheme.typography.titleLarge
             )
         },
         actions = {

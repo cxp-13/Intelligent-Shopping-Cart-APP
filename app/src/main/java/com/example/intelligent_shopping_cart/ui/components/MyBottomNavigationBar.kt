@@ -61,4 +61,5 @@ object AppScreen {
     const val shoppingCart = "shoppingCart"
     const val profileEdit = "profileEdit"
     const val commodityList = "commodityList"
+    const val commodityDetail = "commodityDetail"
 }
