@@ -1,6 +1,8 @@
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
+    id 'kotlin-kapt'
+    id 'com.google.dagger.hilt.android'
 }
 
 android {
@@ -61,6 +63,8 @@ dependencies {
 //    m3
     implementation 'androidx.compose.material3:material3:1.1.0-alpha08'
     implementation "androidx.compose.material3:material3-window-size-class:1.1.0-alpha08"
+//    viewmodel
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-compose:2.6.1'
 
 
     implementation 'androidx.compose.material:material:1.1.1'
@@ -91,4 +95,14 @@ dependencies {
     // ConstraintLayout
     def constraintLayout_version = "1.0.1"
     implementation "androidx.constraintlayout:constraintlayout-compose:$constraintLayout_version"
+
+//    hilt
+    implementation "com.google.dagger:hilt-android:2.44"
+    kapt "com.google.dagger:hilt-compiler:2.44"
+    implementation "androidx.hilt:hilt-navigation-compose:1.0.0"
+}
+
+// Allow references to generated code
+kapt {
+    correctErrorTypes true
 }

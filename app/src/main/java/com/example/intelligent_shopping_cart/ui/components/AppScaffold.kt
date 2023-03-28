@@ -1,24 +1,23 @@
 package com.example.intelligent_shopping_cart.ui.components
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Modifier
-import com.example.intelligent_shopping_cart.screens.main.Main
-import com.example.intelligent_shopping_cart.screens.personal.PersonalProfile
-import com.example.intelligent_shopping_cart.screens.shopping_cart.ShoppingCart
+import androidx.compose.ui.unit.dp
+import com.example.intelligent_shopping_cart.ui.screens.main.Main
+import com.example.intelligent_shopping_cart.ui.screens.personal.PersonalProfile
+import com.example.intelligent_shopping_cart.ui.screens.shopping_cart.ShoppingCart
+import com.example.intelligent_shopping_cart.view_model.UserViewModel
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalPagerApi::class)
+@OptIn(ExperimentalPagerApi::class)
 @Composable
-fun AppScaffold() {
+fun AppScaffold(userViewModel: UserViewModel) {
 
-    val snackbarHostState = remember { SnackbarHostState() }
-//    val scaffoldState = rememberScaffoldState()
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val pagerState = rememberPagerState()
     val scope = rememberCoroutineScope()
@@ -27,16 +26,14 @@ fun AppScaffold() {
     ModalNavigationDrawer(
         drawerContent = {
             ModalDrawerSheet {
-                PersonalProfile(snackbarHostState)
+                PersonalProfile(userViewModel)
             }
-
         },
         drawerState = drawerState,
-        modifier = Modifier.navigationBarsPadding()
     ) {
         Scaffold(
-            snackbarHost = {
-                SnackbarHost(hostState = snackbarHostState)
+            contentWindowInsets = WindowInsets(0.dp, 0.dp, 0.dp, 0.dp),
+            topBar = {
             },
             bottomBar = {
                 MyBottomNavigationBar(
