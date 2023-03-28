@@ -25,6 +25,7 @@ import com.example.intelligent_shopping_cart.ui.components.*
 import com.example.intelligent_shopping_cart.ui.theme.green
 import com.example.intelligent_shopping_cart.utils.LocalNavController
 import com.example.intelligent_shopping_cart.utils.isValidEmail
+import com.example.intelligent_shopping_cart.utils.isValidMobile
 import com.example.intelligent_shopping_cart.view_model.UserIntent
 import com.example.intelligent_shopping_cart.view_model.UserViewModel
 
@@ -137,8 +138,8 @@ fun PersonalProfileEditor(attr: String?, viewModel: UserViewModel) {
 @Composable
 fun ProfileInputField(inputText: String, changeText: (String) -> Unit) {
 
-    val isError by produceState(initialValue = false, key1 = inputText, producer = {
-        value = !inputText.isValidEmail()
+    val isTrue by produceState(initialValue = false, key1 = inputText, producer = {
+        value = inputText.isValidEmail() || inputText.isValidMobile()
     })
 
 
@@ -159,10 +160,10 @@ fun ProfileInputField(inputText: String, changeText: (String) -> Unit) {
         textStyle = TextStyle(
             fontSize = 20.sp
         ),
-        isError = isError
+        isError = !isTrue
     )
 
-    Crossfade(isError) {
+    Crossfade(!isTrue) {
         if (it) {
             Text(text = "格式错误", color = Color.Red)
         }
