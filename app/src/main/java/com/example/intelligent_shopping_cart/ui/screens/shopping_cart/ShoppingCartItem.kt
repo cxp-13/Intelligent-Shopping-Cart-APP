@@ -16,8 +16,8 @@ import com.example.intelligent_shopping_cart.ui.components.AppScreen
 import com.example.intelligent_shopping_cart.ui.components.HeightSpacer
 import com.example.intelligent_shopping_cart.ui.components.NumberChips
 import com.example.intelligent_shopping_cart.ui.components.WidthSpacer
-import com.example.intelligent_shopping_cart.ui.screens.shopping_cart.mock.commoditiesDefault
 import com.example.intelligent_shopping_cart.utils.LocalNavController
+import com.example.intelligent_shopping_cart.view_model.shoppingCartCommodityListMock
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -88,7 +88,7 @@ fun ShoppingCartItem(commodity: Commodity, modifier: Modifier) {
 fun ShoppingCartItemPreview() {
 
     ShoppingCartItem(
-        commoditiesDefault[0], Modifier
+        shoppingCartCommodityListMock[0], Modifier
             .height(100.dp)
             .fillMaxWidth()
     )

@@ -18,19 +18,20 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.intelligent_shopping_cart.model.Commodity
 import com.example.intelligent_shopping_cart.ui.components.AppScreen
-import com.example.intelligent_shopping_cart.ui.screens.shopping_cart.mock.commoditiesDefault
 import com.example.intelligent_shopping_cart.utils.LocalNavController
+import com.example.intelligent_shopping_cart.view_model.shoppingCartCommodityListMock
 
 
 @Preview
 @Composable
 fun CommodityListPreview() {
-    CommodityList("0", commoditiesDefault)
+    CommodityList("0", shoppingCartCommodityListMock)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CommodityList(commodityTypeId: String?, commodities: List<Commodity>) {
+
     Scaffold(topBar = {
         CenterAlignedTopAppBar(title = {
             Text(text = "商品列表")

@@ -8,6 +8,7 @@ import androidx.compose.ui.unit.dp
 import com.example.intelligent_shopping_cart.ui.screens.main.Main
 import com.example.intelligent_shopping_cart.ui.screens.personal.PersonalProfile
 import com.example.intelligent_shopping_cart.ui.screens.shopping_cart.ShoppingCart
+import com.example.intelligent_shopping_cart.view_model.CommodityViewModel
 import com.example.intelligent_shopping_cart.view_model.UserViewModel
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
@@ -16,7 +17,7 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
-fun AppScaffold(userViewModel: UserViewModel) {
+fun AppScaffold(userViewModel: UserViewModel, commodityViewModel: CommodityViewModel) {
 
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val pagerState = rememberPagerState()
@@ -53,8 +54,8 @@ fun AppScaffold(userViewModel: UserViewModel) {
                 contentPadding = it
             ) { page ->
                 when (BottomScreen.values()[page]) {
-                    BottomScreen.Main -> Main(drawerState)
-                    BottomScreen.ShoppingCart -> ShoppingCart()
+                    BottomScreen.Main -> Main(drawerState, commodityViewModel)
+                    BottomScreen.ShoppingCart -> ShoppingCart(commodityViewModel)
                 }
             }
         }

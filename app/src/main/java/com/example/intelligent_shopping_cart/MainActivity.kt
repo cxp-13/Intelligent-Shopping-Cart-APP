@@ -13,7 +13,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.Color
 import androidx.core.view.WindowCompat
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -26,14 +25,13 @@ import com.example.intelligent_shopping_cart.ui.components.AppScaffold
 import com.example.intelligent_shopping_cart.ui.components.AppScreen
 import com.example.intelligent_shopping_cart.ui.screens.commodity_details.CommodityDetailPage
 import com.example.intelligent_shopping_cart.ui.screens.commodity_list.CommodityList
-import com.example.intelligent_shopping_cart.ui.screens.main.mock.commodityTypes
-import com.example.intelligent_shopping_cart.ui.screens.main.mock.getCommodityById
 import com.example.intelligent_shopping_cart.ui.screens.personal.PersonalProfileEditor
 import com.example.intelligent_shopping_cart.ui.screens.register.Register
-import com.example.intelligent_shopping_cart.ui.screens.shopping_cart.mock.commoditiesDefault
 import com.example.intelligent_shopping_cart.ui.theme.Intelligent_shopping_cartTheme
 import com.example.intelligent_shopping_cart.utils.LocalNavController
+import com.example.intelligent_shopping_cart.view_model.CommodityViewModel
 import com.example.intelligent_shopping_cart.view_model.UserViewModel
+import com.example.intelligent_shopping_cart.view_model.shoppingCartCommodityListMock
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -55,7 +53,7 @@ class MainActivity : ComponentActivity() {
                 CompositionLocalProvider(
                     LocalNavController provides navController,
                 ) {
-                    ShoppingCartNavHost(navController, this, navBackStackEntry)
+                    ShoppingCartNavHost(navController, this)
                 }
             }
         }
@@ -67,7 +65,6 @@ class MainActivity : ComponentActivity() {
 fun ShoppingCartNavHost(
     navController: NavHostController,
     mainActivity: MainActivity,
-    navBackStackEntry: NavBackStackEntry?
 ) {
     NavHost(
         navController = navController,
@@ -90,10 +87,10 @@ fun ShoppingCartNavHost(
 //                navController.getBackStackEntry("parent")
 //            }
             Log.d("test", "main: $backStackEntry")
-            val viewModel = hiltViewModel<UserViewModel>(mainActivity)
+            val userViewModel = hiltViewModel<UserViewModel>(mainActivity)
+            val commodityViewModel = hiltViewModel<CommodityViewModel>(mainActivity)
 //            val viewModel = hiltViewModel<UserViewModel>(navBackStackEntry!!)
-
-            AppScaffold(viewModel)
+            AppScaffold(userViewModel, commodityViewModel)
         }
         composable(
             route = "${AppScreen.profileEdit}/{category}",
@@ -120,6 +117,7 @@ fun ShoppingCartNavHost(
 //            val viewModel = hiltViewModel<UserViewModel>(navBackStackEntry!!)
             PersonalProfileEditor(category, viewModel)
         }
+//        点击某一类别的商品后，展示的商品列表
         composable(
             route = "${AppScreen.commodityList}/{commodityTypeId}",
             arguments = listOf(navArgument("commodityTypeId") {
@@ -127,11 +125,11 @@ fun ShoppingCartNavHost(
             }),
         ) { backStackEntry ->
             var commodityTypeId = backStackEntry.arguments?.getString("commodityTypeId")
-            val commodities = commodityTypes.find {
-                it.id == commodityTypeId
-            }?.commodities ?: commoditiesDefault
+            val viewModel = hiltViewModel<CommodityViewModel>(mainActivity)
+            val commodities = viewModel.getCommoditiesById(commodityTypeId!!)
             CommodityList(commodityTypeId, commodities)
         }
+//        商品详情页
         composable(
             route = "${AppScreen.commodityDetail}/{commodityId}?commodityTypeId={commodityTypeId}",
             arguments = listOf(navArgument("commodityTypeId") {
@@ -141,18 +139,16 @@ fun ShoppingCartNavHost(
                 type = NavType.StringType
             })
         ) { backStackEntry ->
+            val commodityViewModel = hiltViewModel<CommodityViewModel>(mainActivity)
+
             var commodityTypeId = backStackEntry.arguments?.getString("commodityTypeId")
             var commodityId = backStackEntry.arguments?.getString("commodityId")
 //如果是-1，则是从购物车点击进入。
             val commodity = if (commodityTypeId == "-1") {
-                getCommodityById(commodityId!!)
+                commodityViewModel.getCommodityById(commodityId!!)
             } else {
-                commodityTypes.find {
-                    it.id == commodityTypeId
-                }?.commodities?.find {
-                    it.id == commodityId
-                }
-            } ?: commoditiesDefault[0]
+                commodityViewModel.getCommodityByTypeIdAndId(commodityTypeId!!, commodityId!!)
+            } ?: shoppingCartCommodityListMock[0]
 
             CommodityDetailPage(commodity)
 

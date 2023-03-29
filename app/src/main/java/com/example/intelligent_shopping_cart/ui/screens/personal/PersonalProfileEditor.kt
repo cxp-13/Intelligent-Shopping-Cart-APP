@@ -142,7 +142,6 @@ fun ProfileInputField(inputText: String, changeText: (String) -> Unit) {
         value = inputText.isValidEmail() || inputText.isValidMobile()
     })
 
-
     val focusRequester = remember {
         FocusRequester()
     }
