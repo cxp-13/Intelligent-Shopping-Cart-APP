@@ -3,6 +3,7 @@ package com.example.intelligent_shopping_cart.ui.screens.register
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -16,16 +17,12 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
@@ -34,30 +31,38 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import com.example.intelligent_shopping_cart.R
-import com.example.intelligent_shopping_cart.ui.components.AppScreen
 import com.example.intelligent_shopping_cart.ui.components.HeightSpacer
 import com.example.intelligent_shopping_cart.utils.LocalNavController
-import com.example.intelligent_shopping_cart.utils.popUpAllBackStackEntry
+import com.example.intelligent_shopping_cart.view_model.UserIntent
+import com.example.intelligent_shopping_cart.view_model.UserViewModel
 
 @OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class)
 @Composable
-fun Register() {
+fun Register(userViewModel: UserViewModel) {
+
+    val uiState by userViewModel.uiState
 
     val keyboardController = LocalSoftwareKeyboardController.current
     val navController = LocalNavController.current
 
-    var focusedTextField by rememberSaveable { mutableStateOf(-1) }
+    DisposableEffect(key1 = Unit, effect = {
+        onDispose {
+            userViewModel.clear()
+        }
+    })
+//    var focusedTextField by rememberSaveable { mutableStateOf(-1) }
 
-    var username by rememberSaveable { mutableStateOf("") }
-    var password by rememberSaveable { mutableStateOf("") }
-    var repeatPassword by rememberSaveable { mutableStateOf("") }
-    var imageUri by rememberSaveable { mutableStateOf<Uri?>(null) }
-    var passwordHidden by rememberSaveable { mutableStateOf(true) }
+//    var username by rememberSaveable { mutableStateOf("") }
+//    var password by rememberSaveable { mutableStateOf("") }
+//    var repeatPassword by rememberSaveable { mutableStateOf("") }
+//    var imageUri by rememberSaveable { mutableStateOf<Uri?>(null) }
+//    var passwordHidden by rememberSaveable { mutableStateOf(true) }
 
     val launcher =
         rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
             uri?.let {
-                imageUri = it
+//                imageUri = it
+                userViewModel.dispatch(UserIntent.LoadImageUri(it))
             }
         }
 
@@ -90,10 +95,10 @@ fun Register() {
                         color = Color.Transparent
                     ) {
                         Image(
-                            painter = imageUri?.let { rememberAsyncImagePainter(imageUri) }
-                                ?: run { painterResource(id = R.drawable.ava1) },
+                            painter = uiState.imageUri?.let {
+                                rememberAsyncImagePainter(it)
+                            } ?: run { painterResource(id = R.drawable.ava1) },
                             contentDescription = null,
-                            contentScale = if (imageUri == null) ContentScale.Fit else ContentScale.Crop,
                             modifier = Modifier.clickable { launcher.launch("image/*") }
                         )
                     }
@@ -107,9 +112,10 @@ fun Register() {
             }
             HeightSpacer(value = 12.dp)
             OutlinedTextField(
-                value = username,
+                value = uiState.username,
                 onValueChange = {
-                    username = it
+//                    username = it
+                    userViewModel.dispatch(UserIntent.InputUserName(it))
                 },
                 colors = TextFieldDefaults.textFieldColors(
                     unfocusedLabelColor = MaterialTheme.colorScheme.primary,
@@ -120,29 +126,22 @@ fun Register() {
                     Text("用户名")
                 },
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .onFocusChanged {
-                        if (it.isFocused) {
-                            focusedTextField = 1
-                        }
-                    },
+                    .fillMaxWidth(),
                 shape = RoundedCornerShape(8.dp),
-                isError = (username.isEmpty() && focusedTextField == 1),
+                isError = uiState.isUserHasExistByName,
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next)
             )
-            if (focusedTextField == 1 || username.isNotEmpty()) {
+            AnimatedVisibility(visible = uiState.isUserHasExistByName) {
                 HeightSpacer(value = 4.dp)
-                Text(
-                    text = if (username.isEmpty()) "用户名无法为空" else "恭喜，你可以使用此用户名",
-                    color = if (username.isNotEmpty()) MaterialTheme.colorScheme.onBackground else MaterialTheme.colorScheme.error
-                )
+                Text(text = "用户已存在", color = MaterialTheme.colorScheme.error)
             }
             HeightSpacer(value = 12.dp)
             OutlinedTextField(
-                value = password,
+                value = uiState.password,
                 onValueChange = {
-                    password = it
+//                    password = it
+                    userViewModel.dispatch(UserIntent.InputPassword(it))
                 },
                 colors = TextFieldDefaults.textFieldColors(
                     unfocusedLabelColor = MaterialTheme.colorScheme.primary,
@@ -154,11 +153,12 @@ fun Register() {
                 },
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(8.dp),
-                visualTransformation = if (passwordHidden) PasswordVisualTransformation() else VisualTransformation.None,
+                visualTransformation = if (uiState.passwordHidden) PasswordVisualTransformation() else VisualTransformation.None,
                 trailingIcon = {
                     IconButton(
                         onClick = {
-                            passwordHidden = !passwordHidden
+//                            passwordHidden = !passwordHidden
+                            userViewModel.dispatch(UserIntent.SwitchPwdHidden)
                         }
                     ) {
                         Icon(painterResource(id = R.drawable.visibility), null)
@@ -168,9 +168,10 @@ fun Register() {
             )
             HeightSpacer(value = 12.dp)
             OutlinedTextField(
-                value = repeatPassword,
+                value = uiState.repeatPassword,
                 onValueChange = {
-                    repeatPassword = it
+//                    repeatPassword = it
+                    userViewModel.dispatch(UserIntent.InputRepeatPassword(it))
                 },
                 colors = TextFieldDefaults.textFieldColors(
                     unfocusedLabelColor = MaterialTheme.colorScheme.primary,
@@ -181,23 +182,18 @@ fun Register() {
                     Text("确认密码")
                 },
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .onFocusChanged {
-                        if (it.isFocused) {
-                            focusedTextField = 3
-                        }
-                    },
+                    .fillMaxWidth(),
                 shape = RoundedCornerShape(8.dp),
                 trailingIcon = {
-                    if (password == repeatPassword && repeatPassword.isNotEmpty()) {
+                    if (uiState.isPwdInconsistent && uiState.repeatPassword.isNotEmpty()) {
                         Icon(Icons.Filled.Check, null)
                     }
                 },
-                visualTransformation = if (passwordHidden) PasswordVisualTransformation() else VisualTransformation.None,
+                visualTransformation = if (uiState.passwordHidden) PasswordVisualTransformation() else VisualTransformation.None,
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Go),
                 keyboardActions = KeyboardActions(onGo = { keyboardController?.hide() })
             )
-            if (password != repeatPassword && focusedTextField == 3) {
+            if (!uiState.isPwdInconsistent) {
                 HeightSpacer(value = 4.dp)
                 Text(
                     text = "输入的密码不一致",
@@ -207,14 +203,15 @@ fun Register() {
             HeightSpacer(value = 22.dp)
             Button(
                 onClick = {
-                    navController.navigate(AppScreen.main) {
-//                        this.popUpTo(AppScreen.login){
-//                            inclusive = true
-//                        }
-                        popUpAllBackStackEntry(navController)
-                    }
+//                    navController.navigate(AppScreen.main) {
+////                        this.popUpTo(AppScreen.login){
+////                            inclusive = true
+////                        }
+//                        popUpAllBackStackEntry(navController)
+//                    }
+                    userViewModel.dispatch(UserIntent.RegisterBtnClick(navController))
                 },
-                enabled = (password == repeatPassword && password.isNotEmpty()),
+                enabled = (uiState.isPwdInconsistent && uiState.password.isNotEmpty()),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color(0xFF0079D3)
                 ),

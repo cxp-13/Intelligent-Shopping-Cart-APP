@@ -27,19 +27,20 @@ import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.example.intelligent_shopping_cart.R
-import com.example.intelligent_shopping_cart.model.UserProfileData
+import com.example.intelligent_shopping_cart.model.User
 import com.example.intelligent_shopping_cart.ui.components.AppScreen
 import com.example.intelligent_shopping_cart.ui.components.CenterRow
 import com.example.intelligent_shopping_cart.ui.components.HeightSpacer
 import com.example.intelligent_shopping_cart.utils.LocalNavController
 import com.example.intelligent_shopping_cart.view_model.UserViewModel
+import com.example.intelligent_shopping_cart.view_model.usersMock
 
 
 @Composable
 fun PersonalProfile(viewModel: UserViewModel) {
 //    val viewModel = ViewModelProvider(LocalViewModelStoreOwner.current!!)[UserViewModel::class.java]
 //    val viewModel : UserViewModel = viewModel()
-    val currentUser by viewModel.uiState
+    val currentUser = viewModel.uiState.value.user
 
     LaunchedEffect(key1 = currentUser, block = {
         Log.d("test", "PersonalProfile: ${currentUser}")
@@ -76,21 +77,12 @@ fun PersonalProfile(viewModel: UserViewModel) {
 }
 
 
-fun getCurrentLoginUserProfile(): UserProfileData {
-    return UserProfileData(
-        R.drawable.ava1,
-        "chen xian ping",
-        "2b吧 哥们",
-        gender = "男",
-        age = 22,
-        phone = "13259934802",
-        email = "1695219012@qq.com",
-        uid = "1024"
-    )
+fun getCurrentLoginUserProfile(): User {
+    return usersMock[0]
 }
 
 @Composable
-fun PersonalProfileHeader(currentUser: UserProfileData) {
+fun PersonalProfileHeader(currentUser: User) {
 //    val currentUser = getCurrentLoginUserProfile()
 
     ConstraintLayout(
@@ -144,8 +136,8 @@ fun PersonalProfileHeader(currentUser: UserProfileData) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PersonalProfileDetail(currentUser: UserProfileData) {
-//    var userProfileData = getCurrentLoginUserProfile()
+fun PersonalProfileDetail(currentUser: User) {
+//    var user = getCurrentLoginUserProfile()
     val navController = LocalNavController.current
 //    val chattyColors = MaterialTheme.chattyColors
     val scope = rememberCoroutineScope()
@@ -207,8 +199,8 @@ fun PersonalProfileDetail(currentUser: UserProfileData) {
                         PersonalProfileItem.EMAIL -> navController.navigate("${AppScreen.profileEdit}/email")
                         PersonalProfileItem.QRCODE -> navController.navigate("${AppScreen.profileEdit}/qrcode")
 //                        PersonalProfileItem.UID -> scope.launch {
-////                            scaffoldState.snackbarHostState.showSnackbar(userProfileData.uid)
-//                            snackbarHostState.showSnackbar(userProfileData.uid)
+////                            scaffoldState.snackbarHostState.showSnackbar(user.uid)
+//                            snackbarHostState.showSnackbar(user.uid)
 //                        }
                         else -> {}
                     }
