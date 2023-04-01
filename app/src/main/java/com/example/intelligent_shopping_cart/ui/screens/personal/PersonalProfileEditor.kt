@@ -111,7 +111,7 @@ fun PersonalProfileEditor(attr: String?, viewModel: UserViewModel) {
                                     viewModel.dispatch(UserIntent.UpdateEmail(inputText))
                                 }
                             }
-                            navController.navigate(AppScreen.main)
+                            navController.navigate(AppScreen.home)
                         },
                     ) {
                         Text(text = "完成")

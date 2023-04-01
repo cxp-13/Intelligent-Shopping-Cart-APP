@@ -1,6 +1,52 @@
 <resources>
     <string name="app_name">Intelligent_shopping_cart</string>
+    <string name="home">home</string>
+    <string name="shopping_cart">shopping cart</string>
+    <string name="hot_today">hot today</string>
+    <string name="list_of_goods">list of goods</string>
+    <string name="searchBox_placeholder">looking for something?</string>
+    <string name="checkout_button_content">checkout</string>
+    <string name="personal_information">personal information</string>
+    <string name="id">id</string>
+    <string name="age">age</string>
+    <string name="gender">gender</string>
+    <string name="phone">phone</string>
+    <string name="email">email</string>
+    <string name="qrcode">qrcode</string>
+    <string name="setup">setup</string>
+    <string name="logout">logout</string>
+    <string name="specification">specification</string>
+    <string name="price">price</string>
+    <!--    login-->
+    <string name="username_or_pwd_error_message">the username or password is incorrect</string>
+    <string name="username">username</string>
+    <string name="password">password</string>
+    <string name="login">login</string>
+    <string name="forgot_password">forgot password?</string>
+    <string name="sign_up">sign up for an account</string>
+    <!--    register-->
+    <string name="repeat_password">confirm the password</string>
+    <string name="register">registration</string>
+    <string name="user_exist_error_message">user already exists</string>
+    <string name="pwd_inconsistent_error_message">the passwords are inconsistent</string>
+    <!-- commodity profile   -->
 
-    <string name="main">首页</string>
-    <string name="shopping_cart">购物车</string>
+    <string name="commodity_name">name: %1$s</string>
+    <string name="commodity_img">image: %1$d</string>
+    <string name="commodity_price">price: %1$d</string>
+    <string name="commodity_origin">origin: %1$s</string>
+    <string name="commodity_brand">brand: %1$s</string>
+    <string name="commodity_specification">specification: %1$s</string>
+    <string name="commodity_shelf_life">shelf life: %1$s</string>
+    <string name="commodity_description">description: %1$s</string>
+    <string name="commodity_count">count: %1$d</string>
+    <string name="commodity_type">type: %1$s</string>
+    <string name="commodity_id">id: %1$s</string>
+    <string name="user_reviews">user reviews</string>
+    <string name="no_views">no views</string>
+    <string name="commodity_total_price">Total price: %1$d yuan</string>
+    <!--    commodity list-->
+    <string name="commodity_list">list of goods</string>
+
+
 </resources>

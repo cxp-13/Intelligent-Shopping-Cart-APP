@@ -1,47 +1,37 @@
-package com.example.intelligent_shopping_cart.ui.screens.main
+package com.example.intelligent_shopping_cart.ui.screens.home
 
-import androidx.compose.foundation.layout.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.ExperimentalComposeUiApi
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.intelligent_shopping_cart.R
 import com.example.intelligent_shopping_cart.ui.components.CircleShapeImage
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
-fun MainTopBar(
+fun HomeTopBar(
     drawerState: DrawerState,
-    openSearchBox: () -> Unit
 ) {
+    val keyboardController = LocalSoftwareKeyboardController.current
     val scope = rememberCoroutineScope()
-//    val chattyColors = LocalChattyColors.current
+
     CenterAlignedTopAppBar(
         title = {
             Text(
-                "首页",
+                stringResource(id = R.string.home),
                 style = MaterialTheme.typography.titleLarge
             )
-        },
-        actions = {
-            IconButton(
-                onClick = { openSearchBox() }
-            ) {
-                Icon(
-                    imageVector = Icons.Rounded.Search,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onBackground
-                )
-            }
         },
         navigationIcon = {
             IconButton(
                 onClick = {
                     scope.launch {
+                        keyboardController?.hide()
                         drawerState.open()
                     }
                 },

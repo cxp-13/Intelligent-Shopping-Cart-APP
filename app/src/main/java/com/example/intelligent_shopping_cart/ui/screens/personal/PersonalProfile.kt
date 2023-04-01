@@ -1,6 +1,5 @@
 package com.example.intelligent_shopping_cart.ui.screens.personal
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -19,6 +18,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -38,14 +38,8 @@ import com.example.intelligent_shopping_cart.view_model.usersMock
 
 @Composable
 fun PersonalProfile(viewModel: UserViewModel) {
-//    val viewModel = ViewModelProvider(LocalViewModelStoreOwner.current!!)[UserViewModel::class.java]
-//    val viewModel : UserViewModel = viewModel()
-    val currentUser = viewModel.uiState.value.user
 
-    LaunchedEffect(key1 = currentUser, block = {
-        Log.d("test", "PersonalProfile: ${currentUser}")
-        Log.d("test", "PersonalProfile: ${viewModel}")
-    })
+    val currentUser = viewModel.uiState.value.user
 
     Column(
         modifier = Modifier
@@ -94,7 +88,7 @@ fun PersonalProfileHeader(currentUser: User) {
         val (portraitImageRef, usernameTextRef, desTextRef) = remember { createRefs() }
         Image(
             painter = painterResource(id = currentUser.avatarRes),
-            contentDescription = "portrait",
+            contentDescription = null,
             modifier = Modifier
                 .constrainAs(portraitImageRef) {
                     top.linkTo(parent.top)
@@ -141,8 +135,6 @@ fun PersonalProfileDetail(currentUser: User) {
     val navController = LocalNavController.current
 //    val chattyColors = MaterialTheme.chattyColors
     val scope = rememberCoroutineScope()
-
-
 //  给用户信息的枚举类赋值上当前用户的信息
     val personalProfileItems = remember(currentUser) {
         PersonalProfileItem.UID.badge = currentUser.uid
@@ -160,7 +152,7 @@ fun PersonalProfileDetail(currentUser: User) {
     ) {
         CenterRow {
             Text(
-                text = "个人信息",
+                text = stringResource(id = R.string.personal_information),
                 fontSize = 25.sp,
                 fontWeight = FontWeight.ExtraBold,
                 modifier = Modifier.weight(1f)
@@ -180,7 +172,10 @@ fun PersonalProfileDetail(currentUser: User) {
         personalProfileItems.forEach { item ->
             NavigationDrawerItem(
                 label = {
-                    Text(item.label, style = MaterialTheme.typography.titleMedium)
+                    Text(
+                        stringResource(id = item.label),
+                        style = MaterialTheme.typography.titleMedium
+                    )
                 },
                 selected = true,
                 badge = {
@@ -214,16 +209,16 @@ fun PersonalProfileDetail(currentUser: User) {
 }
 
 enum class PersonalProfileItem(
-    val label: String,
+    val label: Int,
     var badge: String,
     val icon: ImageVector
 ) {
-    UID("ID号", "-1", Icons.Rounded.Android),
-    SEX("性别", "null", Icons.Rounded.Male),
-    AGE("年龄", "-1", Icons.Rounded.Circle),
-    PHONE("手机号", "-1", Icons.Rounded.Call),
-    EMAIL("电子邮箱", "xxxxxxxx@qq.com", Icons.Rounded.Mail),
-    QRCODE("二维码", "null", Icons.Rounded.QrCode)
+    UID(R.string.id, "-1", Icons.Rounded.Android),
+    SEX(R.string.gender, "null", Icons.Rounded.Male),
+    AGE(R.string.age, "-1", Icons.Rounded.Circle),
+    PHONE(R.string.phone, "-1", Icons.Rounded.Call),
+    EMAIL(R.string.email, "xxxxxxxx@qq.com", Icons.Rounded.Mail),
+    QRCODE(R.string.qrcode, "null", Icons.Rounded.QrCode)
 }
 
 
@@ -255,13 +250,13 @@ fun BottomSettingIcons() {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Icon(Icons.Rounded.Settings, contentDescription = null)
-            Text(text = "设置", fontSize = 15.sp)
+            Text(text = stringResource(id = R.string.setup), fontSize = 15.sp)
         }
         Column(
             modifier = Modifier.clickable(
                 onClick = {
                     navController.navigate(AppScreen.login) {
-                        popUpTo(AppScreen.main) { inclusive = true }
+                        popUpTo(AppScreen.home) { inclusive = true }
                     }
                 },
                 indication = null,
@@ -270,7 +265,11 @@ fun BottomSettingIcons() {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Icon(Icons.Rounded.Logout, contentDescription = null)
-            Text(text = "注销", fontSize = 15.sp, fontWeight = FontWeight.Bold)
+            Text(
+                text = stringResource(id = R.string.logout),
+                fontSize = 15.sp,
+                fontWeight = FontWeight.Bold
+            )
         }
     }
 }

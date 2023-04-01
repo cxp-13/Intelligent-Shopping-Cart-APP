@@ -7,7 +7,9 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.example.intelligent_shopping_cart.R
 import com.example.intelligent_shopping_cart.ui.components.HeightSpacer
 import com.example.intelligent_shopping_cart.view_model.CommodityViewModel
 
@@ -22,7 +24,7 @@ fun ShoppingCart(commodityViewModel: CommodityViewModel) {
 
     Scaffold(
         topBar = {
-            CenterAlignedTopAppBar(title = { Text(text = "购物车") })
+            CenterAlignedTopAppBar(title = { Text(text = stringResource(id = R.string.shopping_cart)) })
         },
         floatingActionButton = {
             SettleAccountFAB(total)

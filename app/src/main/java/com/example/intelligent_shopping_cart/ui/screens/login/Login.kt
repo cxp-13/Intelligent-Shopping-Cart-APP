@@ -1,25 +1,27 @@
 package com.example.intelligent_shopping_cart.ui.screens.login
 
-import android.util.Log
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.animateColor
 import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Warning
 import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.SoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextDecoration
@@ -39,15 +41,6 @@ import com.example.intelligent_shopping_cart.view_model.UserViewModel
 fun Login(userViewModel: UserViewModel) {
 
     val uiState by userViewModel.uiState
-
-    val usernameInteractionSource = remember { MutableInteractionSource() }
-    val passwordInteractionSource = remember { MutableInteractionSource() }
-
-    val usernameFocusedAsState by usernameInteractionSource.collectIsPressedAsState()
-    val passwordFocusedAsState by passwordInteractionSource.collectIsPressedAsState()
-
-    LaunchedEffect(key1 = usernameFocusedAsState, key2 = passwordFocusedAsState, block = {
-    })
 
     DisposableEffect(key1 = Unit, effect = {
         onDispose {
@@ -76,32 +69,12 @@ fun Login(userViewModel: UserViewModel) {
 
     val navController: NavHostController = LocalNavController.current
     val keyboardController: SoftwareKeyboardController? = LocalSoftwareKeyboardController.current
-//    var openDropMenu by remember { mutableStateOf(false) }
-//
-//    var username by remember { mutableStateOf("") }
-//    var password by remember { mutableStateOf("") }
-//    var passwordHidden by rememberSaveable { mutableStateOf(true) }
-
-//    val loginBtnInteractionSource = remember {
-//        MutableInteractionSource()
-//    }
-//
-//    val loginBtnIsPressed by loginBtnInteractionSource.collectIsPressedAsState()
-
-//    LaunchedEffect(key1 = loginBtnInteractionSource.interactions, block = {
-//        loginBtnInteractionSource.interactions.collect {
-//            Log.d("test", "Login: $it")
-//        }
-//    })
-//
-//    val coroutineScope = rememberCoroutineScope()
 
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
             .statusBarsPadding()
-//            .padding(WindowInsets.statusBars.asPaddingValues()),
     ) {
         Column(
             modifier = Modifier
@@ -109,45 +82,54 @@ fun Login(userViewModel: UserViewModel) {
                 .padding(horizontal = 35.dp),
         ) {
             Text(
-                text = "ShoppingCart",
-                style = MaterialTheme.typography.displaySmall
+                text = stringResource(id = R.string.shopping_cart),
+                style = MaterialTheme.typography.displaySmall,
+                fontFamily = FontFamily.Cursive,
+                color = MaterialTheme.colorScheme.primary
             )
             HeightSpacer(value = 20.dp)
-            OutlinedTextField(
-                interactionSource = usernameInteractionSource,
-                value = uiState.username,
-                onValueChange = {
-                    userViewModel.dispatch(UserIntent.InputUserName(it))
-//                    username = it
-                    Log.d("test", "Login: ${uiState.username}")
-                },
-                colors = TextFieldDefaults.textFieldColors(
-                    unfocusedLabelColor = MaterialTheme.colorScheme.primary,
-                    unfocusedIndicatorColor = MaterialTheme.colorScheme.primary,
-                    containerColor = Color.Transparent
-                ),
-                label = {
-                    Text("用户名")
-                },
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(8.dp),
-                trailingIcon = {
-                    IconButton(
-                        onClick = {
-                            userViewModel.dispatch(UserIntent.SwitchOpenDropMenu(keyboardController!!))
-//                            keyboardController?.hide()
-//                            openDropMenu = !openDropMenu
+            Box() {
+                OutlinedTextField(
+                    value = uiState.username,
+                    onValueChange = {
+                        userViewModel.dispatch(UserIntent.InputUserName(it))
+                    },
+                    colors = TextFieldDefaults.textFieldColors(
+                        unfocusedLabelColor = MaterialTheme.colorScheme.primary,
+                        unfocusedIndicatorColor = MaterialTheme.colorScheme.primary,
+                        containerColor = Color.Transparent
+                    ),
+                    label = {
+                        Text(stringResource(id = R.string.username))
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(8.dp),
+                    trailingIcon = {
+                        IconButton(
+                            onClick = {
+                                userViewModel.dispatch(
+                                    UserIntent.SwitchOpenDropMenu(
+                                        keyboardController!!
+                                    )
+                                )
+                            }
+                        ) {
+                            Icon(painterResource(R.drawable.expand), null)
                         }
-                    ) {
-                        Icon(painterResource(R.drawable.expand), null)
+                    },
+                    singleLine = true,
+                    isError = !uiState.isUserHasExist
+                )
+                RecentUserDropdownMenu(
+                    modifier = Modifier, uiState.openDropMenu, uiState.users, closeDropMenu = {
+                        userViewModel.dispatch(UserIntent.CloseDropMenu)
+                    }, itemClick = { user ->
+                        userViewModel.dispatch(UserIntent.DropMenuItemClick(user = user))
                     }
-                },
-                singleLine = true,
-                isError = !uiState.isUserHasExist
-            )
+                )
+            }
             HeightSpacer(value = 10.dp)
             OutlinedTextField(
-                interactionSource = passwordInteractionSource,
                 isError = !uiState.isUserHasExist,
                 value = uiState.password,
                 onValueChange = {
@@ -160,7 +142,7 @@ fun Login(userViewModel: UserViewModel) {
                     containerColor = Color.Transparent
                 ),
                 label = {
-                    Text("密码")
+                    Text(stringResource(id = R.string.password))
                 },
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(8.dp),
@@ -187,8 +169,7 @@ fun Login(userViewModel: UserViewModel) {
                     userViewModel.dispatch(UserIntent.LoginBtnClick(navController))
                 },
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .height(48.dp),
+                    .fillMaxWidth(),
                 elevation = ButtonDefaults.buttonElevation(defaultElevation = 10.dp),
                 shape = MaterialTheme.shapes.medium,
             ) {
@@ -202,22 +183,22 @@ fun Login(userViewModel: UserViewModel) {
                 WidthSpacer(5.dp)
                 Crossfade(!uiState.isUserHasExist) {
                     if (it) {
-                        Text("用户名或密码错误")
+                        Text(stringResource(id = R.string.username_or_pwd_error_message))
                     } else {
-                        Text("登入")
+                        Text(stringResource(id = R.string.login))
                     }
                 }
             }
             HeightSpacer(value = 15.dp)
             CenterRow {
                 Text(
-                    text = "忘记密码？",
+                    text = stringResource(id = R.string.forgot_password),
                     style = MaterialTheme.typography.labelLarge,
                     color = MaterialTheme.colorScheme.onBackground
                 )
                 Spacer(modifier = Modifier.weight(1f))
                 Text(
-                    text = "注册账号",
+                    text = stringResource(id = R.string.sign_up),
                     style = MaterialTheme.typography.labelLarge,
                     textDecoration = TextDecoration.Underline,
                     modifier = Modifier.clickable(

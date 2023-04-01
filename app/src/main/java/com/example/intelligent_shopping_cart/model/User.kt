@@ -13,7 +13,7 @@ data class User(
     val phone: String? = null,
     val email: String? = null,
     val uid: String = UUID.randomUUID().toString(),
-    val password: String? = null
+    val password: String = ""
 )
 
 

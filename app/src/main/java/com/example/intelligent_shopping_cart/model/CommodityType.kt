@@ -8,4 +8,6 @@ data class CommodityType(
     val name: String,
     val commodities: List<Commodity>,
     val id: String = UUID.randomUUID().toString(),
-)
+    val description: String,
+
+    )

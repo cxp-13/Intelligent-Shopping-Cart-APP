@@ -5,7 +5,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.unit.dp
-import com.example.intelligent_shopping_cart.ui.screens.main.Main
+import com.example.intelligent_shopping_cart.ui.screens.home.Home
 import com.example.intelligent_shopping_cart.ui.screens.personal.PersonalProfile
 import com.example.intelligent_shopping_cart.ui.screens.shopping_cart.ShoppingCart
 import com.example.intelligent_shopping_cart.view_model.CommodityViewModel
@@ -26,7 +26,7 @@ fun AppScaffold(userViewModel: UserViewModel, commodityViewModel: CommodityViewM
 
     ModalNavigationDrawer(
         drawerContent = {
-            ModalDrawerSheet {
+            ModalDrawerSheet(windowInsets = WindowInsets(0.dp)) {
                 PersonalProfile(userViewModel)
             }
         },
@@ -54,7 +54,7 @@ fun AppScaffold(userViewModel: UserViewModel, commodityViewModel: CommodityViewM
                 contentPadding = it
             ) { page ->
                 when (BottomScreen.values()[page]) {
-                    BottomScreen.Main -> Main(drawerState, commodityViewModel)
+                    BottomScreen.Main -> Home(drawerState, commodityViewModel)
                     BottomScreen.ShoppingCart -> ShoppingCart(commodityViewModel)
                 }
             }

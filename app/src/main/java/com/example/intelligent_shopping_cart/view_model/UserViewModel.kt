@@ -15,45 +15,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 
-//val usersMock = listOf(
-//    User(
-//        R.drawable.ava1,
-//        "chen xian ping",
-//        "2b吧 哥们",
-//        gender = "男",
-//        age = 22,
-//        phone = "13259934802",
-//        email = "1695219012@qq.com",
-//    ),
-//    User(R.drawable.ava2, "Tony", "冬至"),
-//    User(R.drawable.ava3, "Meth", "“做最好的准备  也做最坏的打算”"),
-//    User(R.drawable.ava4, "Beatriz", "水母只能在深海度过相对失败的一生"),
-//    User(R.drawable.ava5, "香辣鸡腿堡", "请向前走，不要在此停留。konpaku.cn"),
-//    User(R.drawable.ava6, "爱丽丝", "逝者如斯夫，不舍昼夜"),
-//    User(R.drawable.ava7, "Horizon", "对韭当割，人生几何。"),
-//    User(R.drawable.ava8, "鲤鱼", "未曾谋面的也终将会相遇的，慢慢来吧，慢慢约会吧\uD83D\uDC31"),
-//    User(
-//        R.drawable.ava9,
-//        "小太阳",
-//        "这个人很懒，什么都没留下。这个人很懒，什么都没留下。这个人很懒，什么都没留下。这个人很懒，什么都没留下。这个人很懒，什么都没留下。这个人很懒，什么都没留下。这个人很懒，什么都没留下。这个人很懒，什么都没留下。这个人很懒，什么都没留下。这个人很懒，什么都没留下。这个人很懒，什么都没留下。这个人很懒，什么都没留下。这个人很懒，什么都没留下。这个人很懒，什么都没留下。这个人很懒，什么都没留下。"
-//    ),
-//    User(R.drawable.ava10, "时光", "回到过去"),
-//    User(R.drawable.ava1, "Bob", "I miss you"),
-//    User(R.drawable.ava2, "XinLa", "冬至"),
-//    User(R.drawable.ava3, "Nancy", "“做最好的准备  也做最坏的打算”"),
-//    User(R.drawable.ava4, "Nini", "水母只能在深海度过相对失败的一生"),
-//    User(R.drawable.ava5, "Brain", "请向前走，不要在此停留。konpaku.cn"),
-//    User(R.drawable.ava6, "十香", "逝者如斯夫，不舍昼夜"),
-//    User(R.drawable.ava7, "Bird", "对韭当割，人生几何。"),
-//    User(R.drawable.ava8, "泰拉瑞亚", "未曾谋面的也终将会相遇的，慢慢来吧，慢慢约会吧\uD83D\uDC31"),
-//    User(
-//        R.drawable.ava9,
-//        "奥风",
-//        "这个人很懒，什么都没留下。这个人很懒，什么都没留下。这个人很懒，什么都没留下。这个人很懒，什么都没留下。这个人很懒，什么都没留下。这个人很懒，什么都没留下。这个人很懒，什么都没留下。这个人很懒，什么都没留下。这个人很懒，什么都没留下。这个人很懒，什么都没留下。这个人很懒，什么都没留下。这个人很懒，什么都没留下。这个人很懒，什么都没留下。这个人很懒，什么都没留下。这个人很懒，什么都没留下。"
-//    ),
-//    User(R.drawable.ava10, "0x5f3759df", "科学的尽头是玄学")
-//)
-
 sealed class LoginStatus() {
     object Error : LoginStatus()
     object SignIn : LoginStatus()
@@ -93,6 +54,10 @@ sealed class UserIntent {
     data class RegisterBtnClick(val navController: NavHostController) : UserIntent()
     data class NavToRegisterBtnClick(val navController: NavHostController) : UserIntent()
     data class LoadImageUri(var uri: Uri) : UserIntent()
+    object CloseDropMenu : UserIntent()
+
+    data class DropMenuItemClick(val user: User) : UserIntent()
+
 }
 
 data class UserUiState constructor(
@@ -105,7 +70,6 @@ data class UserUiState constructor(
     val repeatPassword: String = "",
     val imageUri: Uri? = null,
 ) {
-
     val isUserHasExistByName: Boolean
         get() {
             for (user in users) {
@@ -160,13 +124,22 @@ class UserViewModel @Inject constructor() : ViewModel() {
             is UserIntent.InputRepeatPassword -> inputRepeatPassword(intent.repeatPassword)
             is UserIntent.LoadImageUri -> loadImageUri(intent.uri)
             is UserIntent.RegisterBtnClick -> registerBtnClick(intent.navController)
+            UserIntent.CloseDropMenu -> closeDropMenu()
+            is UserIntent.DropMenuItemClick -> dropMenuItemClick(intent.user)
         }
     }
 
-    fun loadImageUri(uri: Uri) {
-        _uiState.value = _uiState.value.copy(imageUri = uri)
+    private fun dropMenuItemClick(user: User) {
+        _uiState.value = _uiState.value.copy(username = user.nickname, password = user.password)
     }
 
+    private fun closeDropMenu() {
+        _uiState.value = _uiState.value.copy(openDropMenu = false)
+    }
+
+    private fun loadImageUri(uri: Uri) {
+        _uiState.value = _uiState.value.copy(imageUri = uri)
+    }
 
     private fun inputUserName(username: String) {
         _uiState.value = _uiState.value.copy(username = username)
@@ -197,7 +170,7 @@ class UserViewModel @Inject constructor() : ViewModel() {
 
     private fun loginBtnClick(navController: NavHostController) {
         if (uiState.value.isUserHasExist) {
-            navController.navigate(AppScreen.main) {
+            navController.navigate(AppScreen.home) {
                 popUpTo(AppScreen.login) { inclusive = true }
             }
         }

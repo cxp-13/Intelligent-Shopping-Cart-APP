@@ -4,6 +4,7 @@ import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -15,6 +16,7 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.rounded.Password
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -25,6 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
@@ -50,13 +53,6 @@ fun Register(userViewModel: UserViewModel) {
             userViewModel.clear()
         }
     })
-//    var focusedTextField by rememberSaveable { mutableStateOf(-1) }
-
-//    var username by rememberSaveable { mutableStateOf("") }
-//    var password by rememberSaveable { mutableStateOf("") }
-//    var repeatPassword by rememberSaveable { mutableStateOf("") }
-//    var imageUri by rememberSaveable { mutableStateOf<Uri?>(null) }
-//    var passwordHidden by rememberSaveable { mutableStateOf(true) }
 
     val launcher =
         rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
@@ -77,7 +73,7 @@ fun Register(userViewModel: UserViewModel) {
                 .padding(horizontal = 35.dp, vertical = 48.dp)
         ) {
             Text(
-                text = "注册账号",
+                text = stringResource(id = R.string.register),
                 style = MaterialTheme.typography.headlineSmall,
                 color = MaterialTheme.colorScheme.primary
             )
@@ -123,7 +119,7 @@ fun Register(userViewModel: UserViewModel) {
                     containerColor = Color.Transparent
                 ),
                 label = {
-                    Text("用户名")
+                    Text(stringResource(id = R.string.username))
                 },
                 modifier = Modifier
                     .fillMaxWidth(),
@@ -134,7 +130,10 @@ fun Register(userViewModel: UserViewModel) {
             )
             AnimatedVisibility(visible = uiState.isUserHasExistByName) {
                 HeightSpacer(value = 4.dp)
-                Text(text = "用户已存在", color = MaterialTheme.colorScheme.error)
+                Text(
+                    text = stringResource(id = R.string.user_exist_error_message),
+                    color = MaterialTheme.colorScheme.error
+                )
             }
             HeightSpacer(value = 12.dp)
             OutlinedTextField(
@@ -149,7 +148,7 @@ fun Register(userViewModel: UserViewModel) {
                     containerColor = Color.Transparent
                 ),
                 label = {
-                    Text("密码")
+                    Text(stringResource(id = R.string.password))
                 },
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(8.dp),
@@ -161,7 +160,13 @@ fun Register(userViewModel: UserViewModel) {
                             userViewModel.dispatch(UserIntent.SwitchPwdHidden)
                         }
                     ) {
-                        Icon(painterResource(id = R.drawable.visibility), null)
+                        Crossfade(uiState.passwordHidden) {
+                            if (it) {
+                                Icon(Icons.Rounded.Password, null)
+                            } else {
+                                Icon(painterResource(id = R.drawable.visibility), null)
+                            }
+                        }
                     }
                 },
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next)
@@ -179,7 +184,7 @@ fun Register(userViewModel: UserViewModel) {
                     containerColor = Color.Transparent
                 ),
                 label = {
-                    Text("确认密码")
+                    Text(stringResource(id = R.string.repeat_password))
                 },
                 modifier = Modifier
                     .fillMaxWidth(),
@@ -196,14 +201,14 @@ fun Register(userViewModel: UserViewModel) {
             if (!uiState.isPwdInconsistent) {
                 HeightSpacer(value = 4.dp)
                 Text(
-                    text = "输入的密码不一致",
+                    text = stringResource(id = R.string.pwd_inconsistent_error_message),
                     color = MaterialTheme.colorScheme.error
                 )
             }
             HeightSpacer(value = 22.dp)
             Button(
                 onClick = {
-//                    navController.navigate(AppScreen.main) {
+//                    navController.navigate(AppScreen.home) {
 ////                        this.popUpTo(AppScreen.login){
 ////                            inclusive = true
 ////                        }
@@ -221,7 +226,7 @@ fun Register(userViewModel: UserViewModel) {
                 elevation = ButtonDefaults.buttonElevation(10.dp),
                 shape = RoundedCornerShape(8.dp)
             ) {
-                Text("完成注册", color = Color.White)
+                Text(stringResource(id = R.string.register), color = Color.White)
             }
         }
     }

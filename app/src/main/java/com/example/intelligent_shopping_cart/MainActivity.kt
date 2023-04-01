@@ -22,13 +22,14 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.intelligent_shopping_cart.ui.components.AppScaffold
 import com.example.intelligent_shopping_cart.ui.components.AppScreen
-import com.example.intelligent_shopping_cart.ui.screens.commodity_details.CommodityDetailPage
+import com.example.intelligent_shopping_cart.ui.screens.commodity_details.CommodityDetail
 import com.example.intelligent_shopping_cart.ui.screens.commodity_list.CommodityList
 import com.example.intelligent_shopping_cart.ui.screens.login.Login
 import com.example.intelligent_shopping_cart.ui.screens.personal.PersonalProfileEditor
 import com.example.intelligent_shopping_cart.ui.screens.register.Register
 import com.example.intelligent_shopping_cart.ui.theme.Intelligent_shopping_cartTheme
 import com.example.intelligent_shopping_cart.utils.LocalNavController
+import com.example.intelligent_shopping_cart.view_model.CommodityIntent
 import com.example.intelligent_shopping_cart.view_model.CommodityViewModel
 import com.example.intelligent_shopping_cart.view_model.UserViewModel
 import com.example.intelligent_shopping_cart.view_model.shoppingCartCommodityListMock
@@ -83,13 +84,10 @@ fun ShoppingCartNavHost(
 
             Register(userViewModel)
         }
+//        home
         composable(
-            AppScreen.main,
+            AppScreen.home,
         ) { backStackEntry ->
-//            val parentEntry = remember {
-//                navController.getBackStackEntry("parent")
-//            }
-            Log.d("test", "main: $backStackEntry")
             val userViewModel = hiltViewModel<UserViewModel>(mainActivity)
 //            val userViewModel = hiltViewModel<UserViewModel>(backStackEntry)
 
@@ -119,8 +117,8 @@ fun ShoppingCartNavHost(
         ) { backStackEntry ->
             var commodityTypeId = backStackEntry.arguments?.getString("commodityTypeId")
             val viewModel = hiltViewModel<CommodityViewModel>(mainActivity)
-            val commodities = viewModel.getCommoditiesById(commodityTypeId!!)
-            CommodityList(commodityTypeId, commodities)
+            viewModel.dispatch(CommodityIntent.LoadCommodities(commodityTypeId!!))
+            CommodityList(commodityTypeId, viewModel)
         }
 //        商品详情页
         composable(
@@ -143,7 +141,7 @@ fun ShoppingCartNavHost(
                 commodityViewModel.getCommodityByTypeIdAndId(commodityTypeId!!, commodityId!!)
             } ?: shoppingCartCommodityListMock[0]
 
-            CommodityDetailPage(commodity)
+            CommodityDetail(commodity)
 
         }
     }
