@@ -9,7 +9,7 @@ data class User(
     val nickname: String,
     val motto: String = "",
     val gender: String? = null,
-    val age: Int? = null,
+    var age: Int? = null,
     val phone: String? = null,
     val email: String? = null,
     val uid: String = UUID.randomUUID().toString(),

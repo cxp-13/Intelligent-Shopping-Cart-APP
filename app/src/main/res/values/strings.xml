@@ -23,7 +23,7 @@
     <string name="password">password</string>
     <string name="login">login</string>
     <string name="forgot_password">forgot password?</string>
-    <string name="sign_up">sign up for an account</string>
+    <string name="sign_up">sign up</string>
     <!--    register-->
     <string name="repeat_password">confirm the password</string>
     <string name="register">registration</string>

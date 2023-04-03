@@ -7,16 +7,15 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Warning
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.SoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
@@ -38,9 +37,9 @@ import com.example.intelligent_shopping_cart.view_model.UserViewModel
 
 @OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class)
 @Composable
-fun Login(userViewModel: UserViewModel) {
+fun LoginScreen(userViewModel: UserViewModel) {
 
-    val uiState by userViewModel.uiState
+    val uiState by userViewModel.uiState.collectAsState()
 
     DisposableEffect(key1 = Unit, effect = {
         onDispose {
@@ -69,6 +68,14 @@ fun Login(userViewModel: UserViewModel) {
 
     val navController: NavHostController = LocalNavController.current
     val keyboardController: SoftwareKeyboardController? = LocalSoftwareKeyboardController.current
+
+    var inputHeight by remember {
+        mutableStateOf(0)
+    }
+
+    val inputHeightDp = with(LocalDensity.current) {
+        inputHeight.toDp()
+    }
 
     Box(
         modifier = Modifier
@@ -102,8 +109,12 @@ fun Login(userViewModel: UserViewModel) {
                     label = {
                         Text(stringResource(id = R.string.username))
                     },
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(8.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .onGloballyPositioned {
+                            inputHeight = it.size.height
+                        },
+                    shape = MaterialTheme.shapes.large,
                     trailingIcon = {
                         IconButton(
                             onClick = {
@@ -145,7 +156,7 @@ fun Login(userViewModel: UserViewModel) {
                     Text(stringResource(id = R.string.password))
                 },
                 modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(8.dp),
+                shape = MaterialTheme.shapes.large,
                 visualTransformation = if (uiState.passwordHidden) PasswordVisualTransformation() else VisualTransformation.None,
                 trailingIcon = {
                     IconButton(
@@ -160,7 +171,7 @@ fun Login(userViewModel: UserViewModel) {
                 singleLine = true
             )
             HeightSpacer(value = 20.dp)
-            Button(
+            TextButton(
                 colors = ButtonDefaults.buttonColors(
                     containerColor = loginBtnColor,
                     contentColor = loginBtnOnColor
@@ -169,9 +180,11 @@ fun Login(userViewModel: UserViewModel) {
                     userViewModel.dispatch(UserIntent.LoginBtnClick(navController))
                 },
                 modifier = Modifier
-                    .fillMaxWidth(),
+                    .fillMaxWidth()
+                    .height(inputHeightDp),
+
                 elevation = ButtonDefaults.buttonElevation(defaultElevation = 10.dp),
-                shape = MaterialTheme.shapes.medium,
+                shape = MaterialTheme.shapes.large,
             ) {
                 Crossfade(!uiState.isUserHasExist) {
                     if (it) {

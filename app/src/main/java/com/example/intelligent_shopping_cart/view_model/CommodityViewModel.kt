@@ -1,8 +1,6 @@
 package com.example.intelligent_shopping_cart.view_model
 
-import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.lifecycle.ViewModel
 import com.example.intelligent_shopping_cart.R
@@ -11,6 +9,9 @@ import com.example.intelligent_shopping_cart.model.CommodityType
 import com.example.intelligent_shopping_cart.model.ProductCarouselItem
 import com.example.intelligent_shopping_cart.ui.screens.shopping_cart.mock.appraises
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import javax.inject.Inject
 
 val carouselItemList = listOf(
@@ -443,7 +444,7 @@ data class CommodityUiState(
     // 搜索框是否打开，默认为 false
 //    val isOpenSearchBox: Boolean = false,
     // 搜索框的值，默认为空字符串
-    val searchBoxValue: String = "",
+    var searchBoxValue: String = "",
     // 购物车中的商品列表，默认为 shoppingCartCommodityListMock
     val shoppingCartCommodityList: List<Commodity> = shoppingCartCommodityListMock,
     // 原始商品列表，默认为空列表
@@ -467,8 +468,8 @@ sealed class CommodityIntent() {
 
 @HiltViewModel
 class CommodityViewModel @Inject constructor() : ViewModel() {
-    private var _uiState = mutableStateOf(CommodityUiState())
-    val uiState: State<CommodityUiState> = _uiState
+    private var _uiState = MutableStateFlow(CommodityUiState())
+    val uiState: StateFlow<CommodityUiState> = _uiState.asStateFlow()
 
 //    var showCommoditiesTest: SnapshotStateList<Commodity> =
 //        mutableStateListOf(vegetableList[0], vegetableList[1])

@@ -37,9 +37,9 @@ import com.example.intelligent_shopping_cart.view_model.usersMock
 
 
 @Composable
-fun PersonalProfile(viewModel: UserViewModel) {
+fun PersonalProfileScreen(viewModel: UserViewModel) {
 
-    val currentUser = viewModel.uiState.value.user
+    val currentUser = viewModel.uiState.collectAsState().value.user
 
     Column(
         modifier = Modifier

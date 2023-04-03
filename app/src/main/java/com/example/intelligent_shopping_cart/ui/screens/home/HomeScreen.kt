@@ -5,6 +5,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -17,11 +18,11 @@ import com.example.intelligent_shopping_cart.view_model.CommodityViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Home(drawerState: DrawerState, commodityViewModel: CommodityViewModel) {
+fun HomeScreen(drawerState: DrawerState, commodityViewModel: CommodityViewModel) {
 
     val navHostController = LocalNavController.current
 
-    val uiState by commodityViewModel.uiState
+    val uiState by commodityViewModel.uiState.collectAsState()
 
     Scaffold(
         topBar = {

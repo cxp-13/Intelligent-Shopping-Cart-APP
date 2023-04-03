@@ -22,11 +22,11 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.intelligent_shopping_cart.ui.components.AppScaffold
 import com.example.intelligent_shopping_cart.ui.components.AppScreen
-import com.example.intelligent_shopping_cart.ui.screens.commodity_details.CommodityDetail
-import com.example.intelligent_shopping_cart.ui.screens.commodity_list.CommodityList
-import com.example.intelligent_shopping_cart.ui.screens.login.Login
-import com.example.intelligent_shopping_cart.ui.screens.personal.PersonalProfileEditor
-import com.example.intelligent_shopping_cart.ui.screens.register.Register
+import com.example.intelligent_shopping_cart.ui.screens.commodity_details.CommodityDetailScreen
+import com.example.intelligent_shopping_cart.ui.screens.commodity_list.CommodityListScreen
+import com.example.intelligent_shopping_cart.ui.screens.login.LoginScreen
+import com.example.intelligent_shopping_cart.ui.screens.personal.PersonalProfileEditorScreen
+import com.example.intelligent_shopping_cart.ui.screens.register.RegisterScreen
 import com.example.intelligent_shopping_cart.ui.theme.Intelligent_shopping_cartTheme
 import com.example.intelligent_shopping_cart.utils.LocalNavController
 import com.example.intelligent_shopping_cart.view_model.CommodityIntent
@@ -75,14 +75,14 @@ fun ShoppingCartNavHost(
             AppScreen.login,
         ) {
             val userViewModel = hiltViewModel<UserViewModel>(mainActivity)
-            Login(userViewModel)
+            LoginScreen(userViewModel)
         }
         composable(
             AppScreen.register,
         ) {
             val userViewModel = hiltViewModel<UserViewModel>(mainActivity)
 
-            Register(userViewModel)
+            RegisterScreen(userViewModel)
         }
 //        home
         composable(
@@ -90,7 +90,6 @@ fun ShoppingCartNavHost(
         ) { backStackEntry ->
             val userViewModel = hiltViewModel<UserViewModel>(mainActivity)
 //            val userViewModel = hiltViewModel<UserViewModel>(backStackEntry)
-
             val commodityViewModel = hiltViewModel<CommodityViewModel>(mainActivity)
 //            val commodityViewModel = hiltViewModel<UserViewModel>(backStackEntry)
             AppScaffold(userViewModel, commodityViewModel)
@@ -106,7 +105,7 @@ fun ShoppingCartNavHost(
             val category = backStackEntry.arguments?.getString("category")
             val viewModel = hiltViewModel<UserViewModel>(mainActivity)
 //            val viewModel = hiltViewModel<UserViewModel>(backStackEntry)
-            PersonalProfileEditor(category, viewModel)
+            PersonalProfileEditorScreen(category, viewModel)
         }
 //        点击某一类别的商品后，展示的商品列表
         composable(
@@ -118,7 +117,7 @@ fun ShoppingCartNavHost(
             var commodityTypeId = backStackEntry.arguments?.getString("commodityTypeId")
             val viewModel = hiltViewModel<CommodityViewModel>(mainActivity)
             viewModel.dispatch(CommodityIntent.LoadCommodities(commodityTypeId!!))
-            CommodityList(commodityTypeId, viewModel)
+            CommodityListScreen(commodityTypeId, viewModel)
         }
 //        商品详情页
         composable(
@@ -141,7 +140,7 @@ fun ShoppingCartNavHost(
                 commodityViewModel.getCommodityByTypeIdAndId(commodityTypeId!!, commodityId!!)
             } ?: shoppingCartCommodityListMock[0]
 
-            CommodityDetail(commodity)
+            CommodityDetailScreen(commodity)
 
         }
     }

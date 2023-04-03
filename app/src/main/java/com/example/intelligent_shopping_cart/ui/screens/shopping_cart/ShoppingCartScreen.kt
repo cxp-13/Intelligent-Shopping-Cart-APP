@@ -5,6 +5,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -16,9 +17,9 @@ import com.example.intelligent_shopping_cart.view_model.CommodityViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ShoppingCart(commodityViewModel: CommodityViewModel) {
+fun ShoppingCartScreen(commodityViewModel: CommodityViewModel) {
 
-    val uiState by commodityViewModel.uiState
+    val uiState by commodityViewModel.uiState.collectAsState()
     val total = uiState.total
     val shoppingCartCommodityList = uiState.shoppingCartCommodityList
 

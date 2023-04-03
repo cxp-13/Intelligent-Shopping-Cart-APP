@@ -49,7 +49,7 @@ enum class BottomScreen(
     val unselectedIcon: ImageVector,
     val selectedIcon: ImageVector
 ) {
-    Main(R.string.home, Icons.Outlined.Home, Icons.Filled.Home),
+    Home(R.string.home, Icons.Outlined.Home, Icons.Filled.Home),
     ShoppingCart(R.string.shopping_cart, Icons.Outlined.ShoppingCart, Icons.Filled.ShoppingCart)
 }
 
@@ -57,8 +57,9 @@ object AppScreen {
     const val login = "login"
     const val home = "home"
     const val register = "register"
-    const val shoppingCart = "shoppingCart"
     const val profileEdit = "profileEdit"
     const val commodityList = "commodityList"
     const val commodityDetail = "commodityDetail"
 }
+
+

@@ -21,7 +21,7 @@ import com.example.intelligent_shopping_cart.model.Commodity
 import com.example.intelligent_shopping_cart.view_model.shoppingCartCommodityListMock
 
 @Composable
-fun CommodityDetail(commodity: Commodity) {
+fun CommodityDetailScreen(commodity: Commodity) {
 
     val scrollState = rememberScrollState()
 
@@ -108,6 +108,6 @@ fun CommodityDetail(commodity: Commodity) {
 @Composable
 @Preview
 fun CommodityDetailPagePreview() {
-    CommodityDetail(commodity = shoppingCartCommodityListMock[0])
+    CommodityDetailScreen(commodity = shoppingCartCommodityListMock[0])
 
 }

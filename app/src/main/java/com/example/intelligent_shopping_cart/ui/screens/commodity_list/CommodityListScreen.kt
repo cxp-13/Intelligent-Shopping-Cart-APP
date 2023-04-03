@@ -12,16 +12,22 @@ import com.example.intelligent_shopping_cart.view_model.CommodityViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CommodityList(
+fun CommodityListScreen(
     commodityTypeId: String?,
     viewModel: CommodityViewModel
 ) {
-    val uiState by viewModel.uiState
+    val uiState by viewModel.uiState.collectAsState()
 
 //    val list = uiState.showCommodities!!.toMutableStateList()
 //    var list: SnapshotStateList<Commodity> = remember {
 //        uiState.showCommodities!!.toMutableStateList()
 //    }
+
+    DisposableEffect(key1 = Unit, effect = {
+        onDispose {
+            uiState.searchBoxValue = ""
+        }
+    })
 
     Scaffold(topBar = {
         CenterAlignedTopAppBar(title = {
@@ -34,13 +40,13 @@ fun CommodityList(
                 }
             ) {
                 viewModel.dispatch(CommodityIntent.SearchBtnClick)
-                Log.d("test", "CommodityList: ${uiState.showCommodities}")
+                Log.d("test", "CommodityListScreen: ${uiState.showCommodities}")
 
 //                val list1 = list.filter {
 //                    it.name.contains(uiState.searchBoxValue)
 //                }.toMutableStateList()
 //
-//                Log.d("cxp", "CommodityList: ${list1.toList()}")
+//                Log.d("cxp", "CommodityListScreen: ${list1.toList()}")
 //
 //                list = list1
             }

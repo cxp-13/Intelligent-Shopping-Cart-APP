@@ -20,6 +20,7 @@ import androidx.compose.material.icons.rounded.Password
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -41,9 +42,9 @@ import com.example.intelligent_shopping_cart.view_model.UserViewModel
 
 @OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class)
 @Composable
-fun Register(userViewModel: UserViewModel) {
+fun RegisterScreen(userViewModel: UserViewModel) {
 
-    val uiState by userViewModel.uiState
+    val uiState by userViewModel.uiState.collectAsState()
 
     val keyboardController = LocalSoftwareKeyboardController.current
     val navController = LocalNavController.current

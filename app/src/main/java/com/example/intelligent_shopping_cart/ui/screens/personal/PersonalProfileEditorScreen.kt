@@ -33,17 +33,17 @@ import com.example.intelligent_shopping_cart.view_model.UserViewModel
 //@Preview
 //@Composable
 //fun Demo() {
-//    PersonalProfileEditor("设置性别", viewModel)
+//    PersonalProfileEditorScreen("设置性别", viewModel)
 //}
 
 @Composable
-fun PersonalProfileEditor(attr: String?, viewModel: UserViewModel) {
+fun PersonalProfileEditorScreen(attr: String?, viewModel: UserViewModel) {
 //    val viewModel: UserViewModel = viewModel()
 
 
     LaunchedEffect(key1 = viewModel, block = {
-        Log.d("test", "PersonalProfileEditor: ${viewModel.uiState.value}")
-        Log.d("test", "PersonalProfileEditor: ${viewModel}")
+        Log.d("test", "PersonalProfileEditorScreen: ${viewModel.uiState.value}")
+        Log.d("test", "PersonalProfileEditorScreen: ${viewModel}")
     })
 
     var inputText by remember {

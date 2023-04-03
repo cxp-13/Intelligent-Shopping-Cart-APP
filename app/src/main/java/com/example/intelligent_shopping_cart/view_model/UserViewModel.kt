@@ -1,8 +1,6 @@
 package com.example.intelligent_shopping_cart.view_model
 
 import android.net.Uri
-import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.platform.SoftwareKeyboardController
 import androidx.lifecycle.ViewModel
@@ -12,6 +10,9 @@ import com.example.intelligent_shopping_cart.model.User
 import com.example.intelligent_shopping_cart.ui.components.AppScreen
 import com.example.intelligent_shopping_cart.ui.screens.personal.getCurrentLoginUserProfile
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import javax.inject.Inject
 
 
@@ -70,6 +71,8 @@ data class UserUiState constructor(
     val repeatPassword: String = "",
     val imageUri: Uri? = null,
 ) {
+
+
     val isUserHasExistByName: Boolean
         get() {
             for (user in users) {
@@ -97,71 +100,106 @@ data class UserUiState constructor(
 
 @HiltViewModel
 class UserViewModel @Inject constructor() : ViewModel() {
-    private var _uiState = mutableStateOf(UserUiState())
-    val uiState: State<UserUiState> = _uiState
+    private var _uiState = MutableStateFlow(UserUiState())
+    val uiState: StateFlow<UserUiState> = _uiState.asStateFlow()
 
     fun dispatch(intent: UserIntent) = reducer(_uiState.value, intent)
 
+
+    private fun UserUiState.update(block: UserUiState.() -> UserUiState) {
+        _uiState.value = this@update.block()
+    }
+
     @OptIn(ExperimentalComposeUiApi::class)
-    private fun reducer(model: UserUiState, intent: UserIntent) {
+    private fun reducer(uiState: UserUiState, intent: UserIntent) {
         return when (intent) {
-            is UserIntent.UpdateAge -> emit(model.user.copy(age = intent.age))
-            is UserIntent.SwitchGenders -> emit(model.user.copy(gender = if (intent.gender) "男" else "女"))
-            is UserIntent.UpdateEmail -> emit(model.user.copy(email = intent.email))
-            is UserIntent.UpdatePhone -> emit(model.user.copy(phone = intent.phone))
-            is UserIntent.RegisteredUsers -> emit(
-                model.user.copy(
-                    nickname = intent.username,
-                    password = intent.password
+            is UserIntent.UpdateAge -> uiState.update {
+                copy(user = uiState.user.copy(age = intent.age))
+            }
+            is UserIntent.SwitchGenders -> uiState.update {
+                copy(user = uiState.user.copy(gender = if (intent.gender) "male" else "female"))
+            }
+            is UserIntent.UpdateEmail -> uiState.update {
+                copy(user = uiState.user.copy(email = intent.email))
+            }
+            is UserIntent.UpdatePhone -> uiState.update {
+                copy(user = uiState.user.copy(phone = intent.phone))
+            }
+            is UserIntent.RegisteredUsers -> uiState.update {
+                copy(
+                    user = uiState.user.copy(
+                        nickname = intent.username,
+                        password = intent.password
+                    )
                 )
-            )
-            is UserIntent.InputPassword -> inputPassword(intent.password)
-            is UserIntent.InputUserName -> inputUserName(intent.username)
-            is UserIntent.SwitchOpenDropMenu -> dropMenuBtnClick(intent.keyboardController)
-            UserIntent.SwitchPwdHidden -> passwordHiddenBtnClick()
+            }
+            is UserIntent.InputPassword -> uiState.update {
+                copy(password = intent.password)
+            }
+            is UserIntent.InputUserName -> uiState.update {
+                copy(username = intent.username)
+            }
+            is UserIntent.SwitchOpenDropMenu -> uiState.update {
+                intent.keyboardController.hide()
+                copy(openDropMenu = !_uiState.value.openDropMenu)
+            }
+            UserIntent.SwitchPwdHidden -> uiState.update {
+                copy(passwordHidden = !passwordHidden)
+            }
+            is UserIntent.InputRepeatPassword -> uiState.update {
+                copy(repeatPassword = repeatPassword)
+            }
+            is UserIntent.LoadImageUri -> uiState.update {
+                copy(imageUri = intent.uri)
+            }
+
+            UserIntent.CloseDropMenu -> uiState.update {
+                copy(openDropMenu = false)
+            }
             is UserIntent.LoginBtnClick -> loginBtnClick(intent.navController)
             is UserIntent.NavToRegisterBtnClick -> navToRegisterBtnClick(intent.navController)
-            is UserIntent.InputRepeatPassword -> inputRepeatPassword(intent.repeatPassword)
-            is UserIntent.LoadImageUri -> loadImageUri(intent.uri)
+
             is UserIntent.RegisterBtnClick -> registerBtnClick(intent.navController)
-            UserIntent.CloseDropMenu -> closeDropMenu()
-            is UserIntent.DropMenuItemClick -> dropMenuItemClick(intent.user)
+
+            is UserIntent.DropMenuItemClick -> uiState.update {
+                copy(username = user.nickname, password = user.password)
+            }
         }
     }
 
-    private fun dropMenuItemClick(user: User) {
-        _uiState.value = _uiState.value.copy(username = user.nickname, password = user.password)
-    }
+//    private fun dropMenuItemClick(user: User) {
+//        _uiState.value = _uiState.value.copy(username = user.nickname, password = user.password)
+//    }
 
-    private fun closeDropMenu() {
-        _uiState.value = _uiState.value.copy(openDropMenu = false)
-    }
+//    private fun closeDropMenu() {
+//        _uiState.value = _uiState.value.copy(openDropMenu = false)
+//    }
 
-    private fun loadImageUri(uri: Uri) {
-        _uiState.value = _uiState.value.copy(imageUri = uri)
-    }
+//    private fun loadImageUri(uri: Uri) {
+//        _uiState.value = _uiState.value.copy(imageUri = uri)
+//    }
 
-    private fun inputUserName(username: String) {
-        _uiState.value = _uiState.value.copy(username = username)
-    }
+//    private fun inputUserName(username: String) {
+//        _uiState.value = _uiState.value.copy(username = username)
+//    }
 
-    private fun inputPassword(password: String) {
-        _uiState.value = _uiState.value.copy(password = password)
-    }
+//    private fun inputPassword(password: String) {
+//        _uiState.value = _uiState.value.copy(password = password)
+//    }
 
-    private fun inputRepeatPassword(repeatPassword: String) {
-        _uiState.value = _uiState.value.copy(repeatPassword = repeatPassword)
-    }
+//    private fun inputRepeatPassword(repeatPassword: String) {
+//        _uiState.value = _uiState.value.copy(repeatPassword = repeatPassword)
+//    }
 
-    @OptIn(ExperimentalComposeUiApi::class)
-    private fun dropMenuBtnClick(keyboardController: SoftwareKeyboardController) {
-        keyboardController.hide()
-        _uiState.value = _uiState.value.copy(openDropMenu = !_uiState.value.openDropMenu)
-    }
+//    @OptIn(ExperimentalComposeUiApi::class)
+//    private fun dropMenuBtnClick(keyboardController: SoftwareKeyboardController) {
+//        keyboardController.hide()
+//        _uiState.value = _uiState.value.copy(openDropMenu = !_uiState.value.openDropMenu)
+//    }
 
-    private fun passwordHiddenBtnClick() {
-        _uiState.value = _uiState.value.copy(passwordHidden = !_uiState.value.passwordHidden)
-    }
+//    private fun passwordHiddenBtnClick() {
+//        _uiState.value = _uiState.value.copy(passwordHidden = !_uiState.value.passwordHidden)
+//    }
 
     private fun navToRegisterBtnClick(navController: NavHostController) {
         navController.navigate(AppScreen.register)
@@ -205,7 +243,6 @@ class UserViewModel @Inject constructor() : ViewModel() {
         return true // 添加成功
     }
 
-    private fun emit(state: User) {
-        _uiState.value.user = state
-    }
+
 }
+
