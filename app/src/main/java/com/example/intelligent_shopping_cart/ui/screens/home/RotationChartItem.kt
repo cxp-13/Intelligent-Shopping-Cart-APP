@@ -1,7 +1,5 @@
 package com.example.intelligent_shopping_cart.ui.screens.home
 
-import androidx.annotation.DrawableRes
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
@@ -9,19 +7,19 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
 
 @Composable
-fun RotationChartItem(modifier: Modifier, @DrawableRes image: Int, title: String) {
+fun RotationChartItem(modifier: Modifier, image: String, title: String) {
     Card(
         shape = MaterialTheme.shapes.small,
         modifier = modifier
             .size(136.dp),
     ) {
         Column {
-            Image(
-                painterResource(id = image),
+            AsyncImage(
+                model = image,
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier

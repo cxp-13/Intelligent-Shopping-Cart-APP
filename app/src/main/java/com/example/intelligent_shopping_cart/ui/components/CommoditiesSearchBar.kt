@@ -16,7 +16,6 @@ fun CommoditiesSearchBar(
     value: String,
     placeholder: String,
     changeValue: (String) -> Unit,
-    searchBtnClick: () -> Unit
 ) {
     SearchBar(
         modifier = Modifier
@@ -27,7 +26,7 @@ fun CommoditiesSearchBar(
             changeValue(it)
         },
         onSearch = {
-            searchBtnClick()
+
         },
         active = false,
         onActiveChange = {},

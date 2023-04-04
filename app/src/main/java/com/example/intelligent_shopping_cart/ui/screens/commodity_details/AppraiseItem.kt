@@ -21,7 +21,7 @@ fun AppraiseItem(modifier: Modifier, appraise: Appraise) {
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Image(
-                painter = painterResource(id = appraise.user.avatarRes),
+                painter = painterResource(id = com.example.intelligent_shopping_cart.R.drawable.ava1),
                 contentDescription = null,
                 modifier = Modifier
                     .size(40.dp)
@@ -31,7 +31,7 @@ fun AppraiseItem(modifier: Modifier, appraise: Appraise) {
                 modifier = Modifier.padding(horizontal = 8.dp)
             ) {
                 Text(
-                    text = appraise.user.nickname,
+                    text = "user name",
                     style = MaterialTheme.typography.titleLarge
                 )
                 Text(

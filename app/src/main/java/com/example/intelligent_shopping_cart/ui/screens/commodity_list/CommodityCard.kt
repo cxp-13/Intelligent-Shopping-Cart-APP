@@ -1,6 +1,5 @@
 package com.example.intelligent_shopping_cart.ui.screens.commodity_list
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -13,15 +12,15 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
 import com.example.intelligent_shopping_cart.model.Commodity
 import com.example.intelligent_shopping_cart.ui.components.AppScreen
 import com.example.intelligent_shopping_cart.utils.LocalNavController
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3Api::class)
 @Composable
-fun CommodityCard(commodityTypeId: String?, commodity: Commodity) {
+fun CommodityCard(commodity: Commodity) {
 
     val navHostController = LocalNavController.current
 
@@ -29,14 +28,14 @@ fun CommodityCard(commodityTypeId: String?, commodity: Commodity) {
         shape = RoundedCornerShape(8.dp),
         modifier = Modifier.padding(8.dp),
         onClick = {
-            navHostController.navigate("${AppScreen.commodityDetail}/${commodity.id}?commodityTypeId=${commodityTypeId}")
+            navHostController.navigate("${AppScreen.commodityDetail}/${commodity.id}")
         }
     ) {
         Column(
             modifier = Modifier.fillMaxWidth()
         ) {
-            Image(
-                painter = painterResource(id = commodity.img),
+            AsyncImage(
+                model = commodity.img,
                 contentDescription = null,
                 modifier = Modifier
                     .fillMaxWidth()

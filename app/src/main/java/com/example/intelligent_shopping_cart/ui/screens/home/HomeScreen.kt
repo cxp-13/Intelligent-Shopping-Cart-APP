@@ -1,12 +1,11 @@
 package com.example.intelligent_shopping_cart.ui.screens.home
 
+import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -21,8 +20,26 @@ import com.example.intelligent_shopping_cart.view_model.CommodityViewModel
 fun HomeScreen(drawerState: DrawerState, commodityViewModel: CommodityViewModel) {
 
     val navHostController = LocalNavController.current
+    val uiState by commodityViewModel.uiState
 
-    val uiState by commodityViewModel.uiState.collectAsState()
+    LaunchedEffect(key1 = uiState, block = {
+        commodityViewModel.initUiState()
+    })
+
+//    var carouselItems = remember {
+//        mutableStateOf(emptyList<Commodity>())
+//    }
+
+//    LaunchedEffect(uiState) {
+//         commodityViewModel.getAll().collect{
+//             carouselItems.value = it.subList(0, 5)
+//        }
+//    }
+
+
+    LaunchedEffect(key1 = uiState, block = {
+        Log.d("cxp", "HomeScreen: ${uiState.carouselItems}")
+    })
 
     Scaffold(
         topBar = {
@@ -42,6 +59,7 @@ fun HomeScreen(drawerState: DrawerState, commodityViewModel: CommodityViewModel)
             )
             HeightSpacer(value = 10.dp)
 //            轮播图
+//            HomeRotationChart(items = uiState.carouselItems)
             HomeRotationChart(items = uiState.carouselItems)
             Text(
                 text = stringResource(id = R.string.list_of_goods),
@@ -52,8 +70,8 @@ fun HomeScreen(drawerState: DrawerState, commodityViewModel: CommodityViewModel)
                         bottom = 16.dp,
                     )
             )
-//            商品类型
-            HomeCommodityTypeList(items = uiState.commodityTypes) {
+//            商品类型列表
+            HomeCommodityTypeList(items = uiState.commodityTypeMap) {
                 navHostController.navigate("${AppScreen.commodityList}/${it}")
             }
         }

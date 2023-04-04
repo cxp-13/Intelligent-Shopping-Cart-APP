@@ -13,20 +13,21 @@ import com.example.intelligent_shopping_cart.view_model.CommodityViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CommodityListScreen(
-    commodityTypeId: String?,
     viewModel: CommodityViewModel
 ) {
-    val uiState by viewModel.uiState.collectAsState()
-
-//    val list = uiState.showCommodities!!.toMutableStateList()
-//    var list: SnapshotStateList<Commodity> = remember {
-//        uiState.showCommodities!!.toMutableStateList()
-//    }
+    val uiState by viewModel.uiState
 
     DisposableEffect(key1 = Unit, effect = {
         onDispose {
             uiState.searchBoxValue = ""
         }
+    })
+
+    LaunchedEffect(key1 = uiState.searchBoxValue, block = {
+        viewModel.initUiState()
+        Log.d("zlf", "CommodityListScreen: ${uiState.displayCommodities}")
+        Log.d("zlf", "CommodityListScreen: ${uiState.selectedType}")
+        Log.d("zlf", "CommodityListScreen: ${uiState.commodityTypeMap}")
     })
 
     Scaffold(topBar = {
@@ -38,24 +39,12 @@ fun CommodityListScreen(
                 changeValue = {
                     viewModel.dispatch(CommodityIntent.ChangeSearchBoxValue(it))
                 }
-            ) {
-                viewModel.dispatch(CommodityIntent.SearchBtnClick)
-                Log.d("test", "CommodityListScreen: ${uiState.showCommodities}")
-
-//                val list1 = list.filter {
-//                    it.name.contains(uiState.searchBoxValue)
-//                }.toMutableStateList()
-//
-//                Log.d("cxp", "CommodityListScreen: ${list1.toList()}")
-//
-//                list = list1
-            }
-//            Text(text = stringResource(id = R.string.commodity_list))
+            )
         })
     }) { paddingValues ->
         LazyVerticalGrid(columns = GridCells.Fixed(2), contentPadding = paddingValues) {
-            items(uiState.showCommodities) { item ->
-                CommodityCard(commodityTypeId, item)
+            items(uiState.displayCommodities) { item ->
+                CommodityCard(item)
             }
         }
 

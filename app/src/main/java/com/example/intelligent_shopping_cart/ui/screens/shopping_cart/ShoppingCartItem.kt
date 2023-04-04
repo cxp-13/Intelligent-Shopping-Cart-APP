@@ -1,6 +1,5 @@
 package com.example.intelligent_shopping_cart.ui.screens.shopping_cart
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -8,10 +7,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
 import com.example.intelligent_shopping_cart.R
 import com.example.intelligent_shopping_cart.model.Commodity
 import com.example.intelligent_shopping_cart.ui.components.AppScreen
@@ -19,7 +17,6 @@ import com.example.intelligent_shopping_cart.ui.components.HeightSpacer
 import com.example.intelligent_shopping_cart.ui.components.NumberChips
 import com.example.intelligent_shopping_cart.ui.components.WidthSpacer
 import com.example.intelligent_shopping_cart.utils.LocalNavController
-import com.example.intelligent_shopping_cart.view_model.shoppingCartCommodityListMock
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -44,8 +41,8 @@ fun ShoppingCartItem(commodity: Commodity, modifier: Modifier) {
         ) {
 
             Card(modifier = Modifier.weight(0.3f), shape = MaterialTheme.shapes.extraSmall) {
-                Image(
-                    painterResource(id = commodity.img),
+                AsyncImage(
+                    model = commodity.img,
                     contentDescription = null,
                     contentScale = ContentScale.FillBounds
                 )
@@ -80,18 +77,7 @@ fun ShoppingCartItem(commodity: Commodity, modifier: Modifier) {
                 modifier = Modifier.padding(end = 3.dp),
                 style = MaterialTheme.typography.labelSmall
             )
-            NumberChips(number = commodity.totalPrice, color = Color.Blue)
+            NumberChips(number = 0, color = Color.Blue)
         }
     }
-}
-
-@Preview
-@Composable
-fun ShoppingCartItemPreview() {
-
-    ShoppingCartItem(
-        shoppingCartCommodityListMock[0], Modifier
-            .height(100.dp)
-            .fillMaxWidth()
-    )
 }

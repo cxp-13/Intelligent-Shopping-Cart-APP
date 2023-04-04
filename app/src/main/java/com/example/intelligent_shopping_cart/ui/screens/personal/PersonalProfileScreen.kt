@@ -33,7 +33,6 @@ import com.example.intelligent_shopping_cart.ui.components.CenterRow
 import com.example.intelligent_shopping_cart.ui.components.HeightSpacer
 import com.example.intelligent_shopping_cart.utils.LocalNavController
 import com.example.intelligent_shopping_cart.view_model.UserViewModel
-import com.example.intelligent_shopping_cart.view_model.usersMock
 
 
 @Composable
@@ -68,11 +67,6 @@ fun PersonalProfileScreen(viewModel: UserViewModel) {
             BottomSettingIcons()
         }
     }
-}
-
-
-fun getCurrentLoginUserProfile(): User {
-    return usersMock[0]
 }
 
 @Composable
@@ -137,11 +131,11 @@ fun PersonalProfileDetail(currentUser: User) {
     val scope = rememberCoroutineScope()
 //  给用户信息的枚举类赋值上当前用户的信息
     val personalProfileItems = remember(currentUser) {
-        PersonalProfileItem.UID.badge = currentUser.uid
-        PersonalProfileItem.SEX.badge = currentUser.gender.toString()
+        PersonalProfileItem.UID.badge = currentUser.id.toString()
+        PersonalProfileItem.SEX.badge = currentUser.gender
         PersonalProfileItem.AGE.badge = currentUser.age.toString()
-        PersonalProfileItem.PHONE.badge = currentUser.phone.toString()
-        PersonalProfileItem.EMAIL.badge = currentUser.email.toString()
+        PersonalProfileItem.PHONE.badge = currentUser.phone
+        PersonalProfileItem.EMAIL.badge = currentUser.email
         PersonalProfileItem.values()
     }
 

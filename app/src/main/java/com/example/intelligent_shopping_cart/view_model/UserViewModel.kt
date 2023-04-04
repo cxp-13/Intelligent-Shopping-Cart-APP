@@ -5,10 +5,8 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.platform.SoftwareKeyboardController
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavHostController
-import com.example.intelligent_shopping_cart.R
 import com.example.intelligent_shopping_cart.model.User
 import com.example.intelligent_shopping_cart.ui.components.AppScreen
-import com.example.intelligent_shopping_cart.ui.screens.personal.getCurrentLoginUserProfile
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -20,23 +18,6 @@ sealed class LoginStatus() {
     object Error : LoginStatus()
     object SignIn : LoginStatus()
 }
-
-val usersMock = mutableListOf(
-    User(
-        R.drawable.ava1,
-        "user1",
-        "motto1",
-        "male",
-        18,
-        "123456789",
-        "user1@example.com",
-        password = "123456"
-    ),
-    User(R.drawable.ava2, "user2", "motto2", "female", 22, "987654321", "user2@example.com"),
-    User(R.drawable.ava3, "user3", "motto3", "male", 30, "123123123", "user3@example.com"),
-    User(R.drawable.ava4, "user4", "motto4", "female", 25, "456456456", "user4@example.com"),
-    User(R.drawable.ava5, "user5", "motto5", "male", 28, "789789789", "user5@example.com")
-)
 
 sealed class UserIntent {
     data class UpdateAge(val age: Int) : UserIntent()
@@ -56,14 +37,12 @@ sealed class UserIntent {
     data class NavToRegisterBtnClick(val navController: NavHostController) : UserIntent()
     data class LoadImageUri(var uri: Uri) : UserIntent()
     object CloseDropMenu : UserIntent()
-
     data class DropMenuItemClick(val user: User) : UserIntent()
-
 }
 
 data class UserUiState constructor(
-    var user: User = getCurrentLoginUserProfile(),
-    val users: MutableList<User> = usersMock,
+    var user: User = User(),
+    val users: MutableList<User> = mutableListOf(),
     var openDropMenu: Boolean = false,
     var username: String = "",
     var password: String = "",
@@ -71,8 +50,6 @@ data class UserUiState constructor(
     val repeatPassword: String = "",
     val imageUri: Uri? = null,
 ) {
-
-
     val isUserHasExistByName: Boolean
         get() {
             for (user in users) {

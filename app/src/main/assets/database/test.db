@@ -1,0 +1,5 @@
+INSERT INTO commodity (name, img, price, origin, brand, specification, shelf_life, description, count, type) VALUES ("Apple", "https://images.pexels.com/photos/549093/pexels-photo-549093.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2", 10, "China", "Huaniu", "1kg", "2023-05-01", "Fresh and juicy apple", 100, "Fruit");
+
+INSERT INTO commodity (name, img, price, origin, brand, specification, shelf_life, description, count, type) VALUES ("Milk", "https://images.pexels.com/photos/1021043/pexels-photo-1021043.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2", 5, "USA", "Nestle", "200ml", "2023-04-10", "High quality milk with great taste", 50, "Drink");
+
+INSERT INTO commodity (name, img, price, origin, brand, specification, shelf_life, description, count, type) VALUES ("T-Shirt", "https://images.pexels.com/photos/2063273/pexels-photo-2063273.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2", 20, "Vietnam", "Adidas", "XL", "2024-01-01", "Comfortable and breathable cotton t-shirt", 200, "Cloth");

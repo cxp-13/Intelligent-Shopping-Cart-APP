@@ -6,19 +6,22 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.example.intelligent_shopping_cart.model.CommodityType
+import com.example.intelligent_shopping_cart.model.Commodity
 
 @Composable
-fun HomeCommodityTypeList(items: List<CommodityType>, navToCommodityList: (String) -> Unit) {
+fun HomeCommodityTypeList(
+    items: Map<String, List<Commodity>>,
+    navToCommodityList: (String) -> Unit
+) {
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp),
         modifier = Modifier
             .padding(horizontal = 16.dp)
             .padding(bottom = 16.dp),
     ) {
-        items.forEach { item ->
-            HomeCommodityTypeListItem(commodityType = item) {
-                navToCommodityList(item.id)
+        items.forEach { (typeName, commodities) ->
+            HomeCommodityTypeListItem(typeName, commodities[0]) {
+                navToCommodityList(typeName)
             }
         }
     }

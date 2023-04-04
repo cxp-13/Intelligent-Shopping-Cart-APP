@@ -32,7 +32,6 @@ import com.example.intelligent_shopping_cart.utils.LocalNavController
 import com.example.intelligent_shopping_cart.view_model.CommodityIntent
 import com.example.intelligent_shopping_cart.view_model.CommodityViewModel
 import com.example.intelligent_shopping_cart.view_model.UserViewModel
-import com.example.intelligent_shopping_cart.view_model.shoppingCartCommodityListMock
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -92,6 +91,9 @@ fun ShoppingCartNavHost(
 //            val userViewModel = hiltViewModel<UserViewModel>(backStackEntry)
             val commodityViewModel = hiltViewModel<CommodityViewModel>(mainActivity)
 //            val commodityViewModel = hiltViewModel<UserViewModel>(backStackEntry)
+
+
+            Log.d("cxp", "ShoppingCartNavHost-home: $commodityViewModel")
             AppScaffold(userViewModel, commodityViewModel)
         }
 //        个人信息编辑页
@@ -109,42 +111,31 @@ fun ShoppingCartNavHost(
         }
 //        点击某一类别的商品后，展示的商品列表
         composable(
-            route = "${AppScreen.commodityList}/{commodityTypeId}",
-            arguments = listOf(navArgument("commodityTypeId") {
+            route = "${AppScreen.commodityList}/{commodityType}",
+            arguments = listOf(navArgument("commodityType") {
                 type = NavType.StringType
             }),
         ) { backStackEntry ->
-            var commodityTypeId = backStackEntry.arguments?.getString("commodityTypeId")
+            val commodityType = backStackEntry.arguments?.getString("commodityType")
             val viewModel = hiltViewModel<CommodityViewModel>(mainActivity)
-            viewModel.dispatch(CommodityIntent.LoadCommodities(commodityTypeId!!))
-            CommodityListScreen(commodityTypeId, viewModel)
+            viewModel.dispatch(CommodityIntent.SelectType(commodityType!!))
+            Log.d("cxp", "ShoppingCartNavHost-commotitylist: $viewModel")
+
+            CommodityListScreen(viewModel)
         }
 //        商品详情页
         composable(
-            route = "${AppScreen.commodityDetail}/{commodityId}?commodityTypeId={commodityTypeId}",
-            arguments = listOf(navArgument("commodityTypeId") {
-                type = NavType.StringType
-                defaultValue = "-1"
-            }, navArgument("commodityId") {
-                type = NavType.StringType
+            route = "${AppScreen.commodityDetail}/{commodityId}",
+            arguments = listOf(navArgument("commodityId") {
+                type = NavType.IntType
             })
         ) { backStackEntry ->
             val commodityViewModel = hiltViewModel<CommodityViewModel>(mainActivity)
-
-            var commodityTypeId = backStackEntry.arguments?.getString("commodityTypeId")
-            var commodityId = backStackEntry.arguments?.getString("commodityId")
-//如果是-1，则是从购物车点击进入。
-            val commodity = if (commodityTypeId == "-1") {
-                commodityViewModel.getCommodityById(commodityId!!)
-            } else {
-                commodityViewModel.getCommodityByTypeIdAndId(commodityTypeId!!, commodityId!!)
-            } ?: shoppingCartCommodityListMock[0]
-
-            CommodityDetailScreen(commodity)
+            val commodityId = backStackEntry.arguments?.getInt("commodityId")
+            commodityViewModel.dispatch(CommodityIntent.SelectCommodity(commodityId!!))
+            CommodityDetailScreen(commodityViewModel)
 
         }
     }
-
-
 }
 

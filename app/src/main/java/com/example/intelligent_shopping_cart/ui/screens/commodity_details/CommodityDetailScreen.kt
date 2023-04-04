@@ -1,6 +1,5 @@
 package com.example.intelligent_shopping_cart.ui.screens.commodity_details
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -12,16 +11,20 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
 import com.example.intelligent_shopping_cart.R
-import com.example.intelligent_shopping_cart.model.Commodity
-import com.example.intelligent_shopping_cart.view_model.shoppingCartCommodityListMock
+import com.example.intelligent_shopping_cart.ui.screens.shopping_cart.mock.appraisesMock
+import com.example.intelligent_shopping_cart.view_model.CommodityViewModel
 
 @Composable
-fun CommodityDetailScreen(commodity: Commodity) {
+fun CommodityDetailScreen(commodityViewModel: CommodityViewModel) {
+
+
+    val uiState = commodityViewModel.uiState
+    val commodity = uiState.value.selectedCommodity
+
 
     val scrollState = rememberScrollState()
 
@@ -32,9 +35,9 @@ fun CommodityDetailScreen(commodity: Commodity) {
                 .padding(horizontal = 16.dp)
                 .verticalScroll(scrollState)
         ) {
-            Image(
-                painter = painterResource(id = commodity.img),
-                contentDescription = commodity.name,
+            AsyncImage(
+                model = commodity!!.img,
+                contentDescription = null,
                 modifier = Modifier
                     .fillMaxWidth()
                     .aspectRatio(1f)
@@ -85,9 +88,9 @@ fun CommodityDetailScreen(commodity: Commodity) {
                 style = MaterialTheme.typography.headlineSmall,
                 modifier = Modifier.padding(bottom = 8.dp)
             )
-            if (commodity.appraise.isNotEmpty()) {
+            if (appraisesMock.isNotEmpty()) {
                 Column() {
-                    commodity.appraise.forEach { appraise ->
+                    appraisesMock.forEach { appraise ->
                         AppraiseItem(Modifier.padding(10.dp), appraise)
                     }
                 }
@@ -100,14 +103,5 @@ fun CommodityDetailScreen(commodity: Commodity) {
             }
         }
     }
-
-}
-
-
-
-@Composable
-@Preview
-fun CommodityDetailPagePreview() {
-    CommodityDetailScreen(commodity = shoppingCartCommodityListMock[0])
 
 }

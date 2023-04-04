@@ -6,15 +6,15 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.example.intelligent_shopping_cart.model.ProductCarouselItem
+import com.example.intelligent_shopping_cart.model.Commodity
 
 @Composable
-fun HomeRotationChart(items: List<ProductCarouselItem>) {
+fun HomeRotationChart(items: List<Commodity>) {
     LazyRow() {
         items(items = items, itemContent = {
             RotationChartItem(
                 modifier = Modifier.padding(horizontal = 5.dp),
-                image = it.imageResId,
+                image = it.img,
                 title = it.name
             )
         })
