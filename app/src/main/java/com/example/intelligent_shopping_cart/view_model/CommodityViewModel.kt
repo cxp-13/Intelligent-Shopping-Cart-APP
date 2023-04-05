@@ -1,13 +1,15 @@
 package com.example.intelligent_shopping_cart.view_model
 
 import android.util.Log
-import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.intelligent_shopping_cart.logic.repository.CommodityRepository
+import com.example.intelligent_shopping_cart.logic.utils.CommodityFactory
 import com.example.intelligent_shopping_cart.model.Commodity
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -19,21 +21,24 @@ data class CommodityUiState(
 
     val selectedType: String = "",
 
-    val selectedCommodity: Commodity? = null
+    val selectedCommodity: Commodity? = null,
 
-) {
     // 轮播图商品列表，默认为 carouselItemList
-    var carouselItems: List<Commodity> = emptyList()
+    var carouselItems: List<Commodity> = emptyList(),
 
     // 购物车中的商品列表
-    var placeCommodities: List<Commodity> = emptyList()
+    var placeCommodities: List<Commodity> = emptyList(),
 
     // 商品总价
-    var total: Int = 0
+    var total: Int = 0,
 
-    var commodityTypeMap: Map<String, List<Commodity>> = emptyMap()
+    var commodityTypeMap: Map<String, List<Commodity>> = emptyMap(),
+
+    var commoditiesForType: List<Commodity> = emptyList(),
 
     var displayCommodities: List<Commodity> = emptyList()
+) {
+
 }
 
 sealed class CommodityIntent() {
@@ -44,17 +49,20 @@ sealed class CommodityIntent() {
 }
 
 @HiltViewModel
-class CommodityViewModel @Inject constructor(val commodityRepository: CommodityRepository) :
+class CommodityViewModel @Inject constructor(private val commodityRepository: CommodityRepository) :
     ViewModel() {
-    private var _uiState = mutableStateOf(CommodityUiState())
-    val uiState: State<CommodityUiState> = _uiState
+    private var _uiState = MutableStateFlow(CommodityUiState())
+    val uiState: StateFlow<CommodityUiState> = _uiState.asStateFlow()
 
     init {
         initUiState()
     }
 
-    fun initUiState() {
+    private fun initUiState() {
         viewModelScope.launch {
+
+            val commodityList = CommodityFactory.createDummyCommodities(10)
+            commodityRepository.insertAll(commodityList)
             commodityRepository.getAllCommodities().collect { commodities ->
                 Log.d("cxp", "collect: ")
                 _uiState.value.commodities = commodities
@@ -64,11 +72,6 @@ class CommodityViewModel @Inject constructor(val commodityRepository: CommodityR
                 _uiState.value.total = _uiState.value.placeCommodities.sumOf {
                     it.price * it.count
                 }
-                _uiState.value.displayCommodities =
-                    _uiState.value.commodityTypeMap[_uiState.value.selectedType]?.filter {
-                        _uiState.value.searchBoxValue.isEmpty() || it.name.contains(_uiState.value.searchBoxValue)
-                    } ?: emptyList()
-
             }
             Log.d("cxp", "viewModelScope.launch: ${_uiState.value}")
         }
@@ -83,6 +86,9 @@ class CommodityViewModel @Inject constructor(val commodityRepository: CommodityR
         return when (intent) {
             is CommodityIntent.ChangeSearchBoxValue -> uiState.update {
                 copy(searchBoxValue = intent.searchBoxValue)
+                copy(displayCommodities = commoditiesForType.filter {
+                    searchBoxValue.isEmpty() || it.name.contains(searchBoxValue)
+                })
             }
             is CommodityIntent.SelectType -> uiState.update {
                 copy(selectedType = intent.type)

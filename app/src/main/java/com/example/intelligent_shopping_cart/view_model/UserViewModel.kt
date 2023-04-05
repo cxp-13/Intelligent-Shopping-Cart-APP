@@ -4,13 +4,19 @@ import android.net.Uri
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.platform.SoftwareKeyboardController
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
+import com.example.intelligent_shopping_cart.logic.repository.UserRepository
+import com.example.intelligent_shopping_cart.logic.utils.UserFactory
 import com.example.intelligent_shopping_cart.model.User
 import com.example.intelligent_shopping_cart.ui.components.AppScreen
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 
@@ -42,7 +48,7 @@ sealed class UserIntent {
 
 data class UserUiState constructor(
     var user: User = User(),
-    val users: MutableList<User> = mutableListOf(),
+    var users: List<User> = emptyList(),
     var openDropMenu: Boolean = false,
     var username: String = "",
     var password: String = "",
@@ -76,9 +82,20 @@ data class UserUiState constructor(
 }
 
 @HiltViewModel
-class UserViewModel @Inject constructor() : ViewModel() {
+class UserViewModel @Inject constructor(val userRepository: UserRepository) : ViewModel() {
     private var _uiState = MutableStateFlow(UserUiState())
     val uiState: StateFlow<UserUiState> = _uiState.asStateFlow()
+
+
+    init {
+        viewModelScope.launch {
+//            val userList = UserFactory.createDummyUsers(5)
+//            userRepository.insertAllUsers(userList)
+            userRepository.getAllUsers().collect {
+                _uiState.value.users = it
+            }
+        }
+    }
 
     fun dispatch(intent: UserIntent) = reducer(_uiState.value, intent)
 
@@ -124,7 +141,7 @@ class UserViewModel @Inject constructor() : ViewModel() {
                 copy(passwordHidden = !passwordHidden)
             }
             is UserIntent.InputRepeatPassword -> uiState.update {
-                copy(repeatPassword = repeatPassword)
+                copy(repeatPassword = intent.repeatPassword)
             }
             is UserIntent.LoadImageUri -> uiState.update {
                 copy(imageUri = intent.uri)
@@ -139,44 +156,10 @@ class UserViewModel @Inject constructor() : ViewModel() {
             is UserIntent.RegisterBtnClick -> registerBtnClick(intent.navController)
 
             is UserIntent.DropMenuItemClick -> uiState.update {
-                copy(username = user.nickname, password = user.password)
+                copy(username = intent.user.nickname, password = intent.user.password)
             }
         }
     }
-
-//    private fun dropMenuItemClick(user: User) {
-//        _uiState.value = _uiState.value.copy(username = user.nickname, password = user.password)
-//    }
-
-//    private fun closeDropMenu() {
-//        _uiState.value = _uiState.value.copy(openDropMenu = false)
-//    }
-
-//    private fun loadImageUri(uri: Uri) {
-//        _uiState.value = _uiState.value.copy(imageUri = uri)
-//    }
-
-//    private fun inputUserName(username: String) {
-//        _uiState.value = _uiState.value.copy(username = username)
-//    }
-
-//    private fun inputPassword(password: String) {
-//        _uiState.value = _uiState.value.copy(password = password)
-//    }
-
-//    private fun inputRepeatPassword(repeatPassword: String) {
-//        _uiState.value = _uiState.value.copy(repeatPassword = repeatPassword)
-//    }
-
-//    @OptIn(ExperimentalComposeUiApi::class)
-//    private fun dropMenuBtnClick(keyboardController: SoftwareKeyboardController) {
-//        keyboardController.hide()
-//        _uiState.value = _uiState.value.copy(openDropMenu = !_uiState.value.openDropMenu)
-//    }
-
-//    private fun passwordHiddenBtnClick() {
-//        _uiState.value = _uiState.value.copy(passwordHidden = !_uiState.value.passwordHidden)
-//    }
 
     private fun navToRegisterBtnClick(navController: NavHostController) {
         navController.navigate(AppScreen.register)
@@ -194,32 +177,23 @@ class UserViewModel @Inject constructor() : ViewModel() {
     private fun registerBtnClick(navController: NavHostController) {
         if (!uiState.value.isUserHasExist && uiState.value.isPwdInconsistent) {
             navController.navigate(AppScreen.login)
+            viewModelScope.launch {
+                withContext(Dispatchers.IO) {
+                    val user = UserFactory.createDummyUsers(1)[0]
+                    userRepository.insertUser(
+                        user.copy(
+                            nickname = _uiState.value.username,
+                            password = _uiState.value.password
+                        )
+                    )
+                }
+
+            }
         }
     }
 
     fun clear() {
-        _uiState.value = UserUiState()
+        _uiState.value = _uiState.value.copy(username = "", password = "", repeatPassword = "")
     }
-
-    private fun addUser(): Boolean {
-        for (user in _uiState.value.users) {
-            if (user.nickname == _uiState.value.username) {
-                return false // 用户名已存在，添加失败
-            }
-        }
-        _uiState.value = _uiState.value.apply {
-            _uiState.value.users.add(
-                User(
-                    nickname = _uiState.value.username,
-                    password = _uiState.value.password
-                )
-            )
-            copy(user = _uiState.value.user)
-        }
-
-        return true // 添加成功
-    }
-
-
 }
 

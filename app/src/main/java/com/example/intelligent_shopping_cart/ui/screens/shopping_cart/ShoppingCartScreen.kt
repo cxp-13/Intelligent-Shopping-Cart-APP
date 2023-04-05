@@ -17,12 +17,12 @@ import com.example.intelligent_shopping_cart.view_model.CommodityViewModel
 @Composable
 fun ShoppingCartScreen(commodityViewModel: CommodityViewModel) {
 
-    val uiState by commodityViewModel.uiState
+    val uiState by commodityViewModel.uiState.collectAsState()
 
 
-    LaunchedEffect(key1 = uiState, block = {
-        commodityViewModel.initUiState()
-    })
+//    LaunchedEffect(key1 = uiState, block = {
+//        commodityViewModel.initUiState()
+//    })
 
 
 //    var shoppingCartCommodityList = remember {

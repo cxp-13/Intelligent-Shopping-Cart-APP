@@ -37,6 +37,16 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+    override fun onStop() {
+        super.onStop()
+        Log.d("activity_status", "onStop: ")
+    }
+
+    override fun onPause() {
+        super.onPause()
+        Log.d("activity_status", "onPause: ")
+    }
+
     @OptIn(ExperimentalAnimationApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -80,7 +90,6 @@ fun ShoppingCartNavHost(
             AppScreen.register,
         ) {
             val userViewModel = hiltViewModel<UserViewModel>(mainActivity)
-
             RegisterScreen(userViewModel)
         }
 //        home
@@ -91,9 +100,7 @@ fun ShoppingCartNavHost(
 //            val userViewModel = hiltViewModel<UserViewModel>(backStackEntry)
             val commodityViewModel = hiltViewModel<CommodityViewModel>(mainActivity)
 //            val commodityViewModel = hiltViewModel<UserViewModel>(backStackEntry)
-
-
-            Log.d("cxp", "ShoppingCartNavHost-home: $commodityViewModel")
+            Log.d("viewModel_log", "ShoppingCartNavHost-home: $commodityViewModel")
             AppScaffold(userViewModel, commodityViewModel)
         }
 //        个人信息编辑页
@@ -119,8 +126,7 @@ fun ShoppingCartNavHost(
             val commodityType = backStackEntry.arguments?.getString("commodityType")
             val viewModel = hiltViewModel<CommodityViewModel>(mainActivity)
             viewModel.dispatch(CommodityIntent.SelectType(commodityType!!))
-            Log.d("cxp", "ShoppingCartNavHost-commotitylist: $viewModel")
-
+            Log.d("viewModel_log", "ShoppingCartNavHost-commodityList: $viewModel")
             CommodityListScreen(viewModel)
         }
 //        商品详情页
@@ -131,7 +137,10 @@ fun ShoppingCartNavHost(
             })
         ) { backStackEntry ->
             val commodityViewModel = hiltViewModel<CommodityViewModel>(mainActivity)
+
             val commodityId = backStackEntry.arguments?.getInt("commodityId")
+            Log.d("viewModel_log", "ShoppingCartNavHost-commodityDetail: $commodityViewModel")
+
             commodityViewModel.dispatch(CommodityIntent.SelectCommodity(commodityId!!))
             CommodityDetailScreen(commodityViewModel)
 

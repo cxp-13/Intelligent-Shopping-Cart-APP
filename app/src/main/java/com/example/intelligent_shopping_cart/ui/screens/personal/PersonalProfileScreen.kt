@@ -1,6 +1,5 @@
 package com.example.intelligent_shopping_cart.ui.screens.personal
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -26,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
+import coil.compose.AsyncImage
 import com.example.intelligent_shopping_cart.R
 import com.example.intelligent_shopping_cart.model.User
 import com.example.intelligent_shopping_cart.ui.components.AppScreen
@@ -80,8 +80,8 @@ fun PersonalProfileHeader(currentUser: User) {
             .padding(10.dp)
     ) {
         val (portraitImageRef, usernameTextRef, desTextRef) = remember { createRefs() }
-        Image(
-            painter = painterResource(id = currentUser.avatarRes),
+        AsyncImage(
+            model = currentUser.avatar,
             contentDescription = null,
             modifier = Modifier
                 .constrainAs(portraitImageRef) {

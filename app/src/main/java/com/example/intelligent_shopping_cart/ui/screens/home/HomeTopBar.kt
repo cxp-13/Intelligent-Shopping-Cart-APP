@@ -1,15 +1,14 @@
 package com.example.intelligent_shopping_cart.ui.screens.home
 
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.People
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import com.example.intelligent_shopping_cart.R
-import com.example.intelligent_shopping_cart.ui.components.CircleShapeImage
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
@@ -36,9 +35,9 @@ fun HomeTopBar(
                     }
                 },
             ) {
-                CircleShapeImage(
-                    size = 40.dp,
-                    painter = painterResource(id = R.drawable.ava4)
+                Icon(
+                    imageVector = Icons.Rounded.People,
+                    contentDescription = ""
                 )
             }
         },

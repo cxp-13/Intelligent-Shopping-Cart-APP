@@ -1,6 +1,5 @@
 package com.example.intelligent_shopping_cart.ui.screens.commodity_list
 
-import android.util.Log
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
@@ -10,24 +9,28 @@ import com.example.intelligent_shopping_cart.ui.components.CommoditiesSearchBar
 import com.example.intelligent_shopping_cart.view_model.CommodityIntent
 import com.example.intelligent_shopping_cart.view_model.CommodityViewModel
 
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CommodityListScreen(
     viewModel: CommodityViewModel
 ) {
-    val uiState by viewModel.uiState
+    val uiState by viewModel.uiState.collectAsState()
+
+//    val stateList: MutableState<List<Commodity>> = remember {
+//       mutableStateOf(uiState.commoditiesForType)
+//    }
+
+//    LaunchedEffect(key1 = uiState.searchBoxValue) {
+//        stateList.value = uiState.commoditiesForType.filter {
+//            uiState.searchBoxValue.isEmpty() || it.name.contains(uiState.searchBoxValue)
+//        }
+//    }
 
     DisposableEffect(key1 = Unit, effect = {
         onDispose {
             uiState.searchBoxValue = ""
         }
-    })
-
-    LaunchedEffect(key1 = uiState.searchBoxValue, block = {
-        viewModel.initUiState()
-        Log.d("zlf", "CommodityListScreen: ${uiState.displayCommodities}")
-        Log.d("zlf", "CommodityListScreen: ${uiState.selectedType}")
-        Log.d("zlf", "CommodityListScreen: ${uiState.commodityTypeMap}")
     })
 
     Scaffold(topBar = {
@@ -47,7 +50,6 @@ fun CommodityListScreen(
                 CommodityCard(item)
             }
         }
-
     }
 }
 

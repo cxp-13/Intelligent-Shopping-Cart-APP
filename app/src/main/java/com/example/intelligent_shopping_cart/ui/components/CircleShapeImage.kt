@@ -1,28 +1,27 @@
 package com.example.intelligent_shopping_cart.ui.components
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.Dp
+import coil.compose.AsyncImage
 
 @Composable
 fun CircleShapeImage(
     size: Dp,
-    painter: Painter,
-    contentScale: ContentScale = ContentScale.Fit
+    img: String,
+    contentScale: ContentScale = ContentScale.FillBounds
 ) {
     Surface(
         modifier = Modifier
             .size(size),
         shape = CircleShape
     ) {
-        Image(
-            painter = painter,
+        AsyncImage(
+            model = img,
             contentDescription = null,
             contentScale = contentScale
         )

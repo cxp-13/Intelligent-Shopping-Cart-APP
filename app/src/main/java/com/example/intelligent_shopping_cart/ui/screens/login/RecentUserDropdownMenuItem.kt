@@ -4,7 +4,6 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.example.intelligent_shopping_cart.model.User
 import com.example.intelligent_shopping_cart.ui.components.CircleShapeImage
@@ -24,6 +23,6 @@ fun RecentUserDropdownMenuItem(
             closeDropMenu()
         },
         leadingIcon = {
-            CircleShapeImage(size = 45.dp, painter = painterResource(id = user.avatarRes))
+            CircleShapeImage(size = 45.dp, img = user.avatar)
         })
 }

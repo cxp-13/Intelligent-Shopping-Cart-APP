@@ -209,12 +209,6 @@ fun RegisterScreen(userViewModel: UserViewModel) {
             HeightSpacer(value = 22.dp)
             Button(
                 onClick = {
-//                    navController.navigate(AppScreen.home) {
-////                        this.popUpTo(AppScreen.login){
-////                            inclusive = true
-////                        }
-//                        popUpAllBackStackEntry(navController)
-//                    }
                     userViewModel.dispatch(UserIntent.RegisterBtnClick(navController))
                 },
                 enabled = (uiState.isPwdInconsistent && uiState.password.isNotEmpty()),

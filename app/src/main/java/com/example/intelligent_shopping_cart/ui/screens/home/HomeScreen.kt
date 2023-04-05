@@ -20,11 +20,11 @@ import com.example.intelligent_shopping_cart.view_model.CommodityViewModel
 fun HomeScreen(drawerState: DrawerState, commodityViewModel: CommodityViewModel) {
 
     val navHostController = LocalNavController.current
-    val uiState by commodityViewModel.uiState
+    val uiState by commodityViewModel.uiState.collectAsState()
 
-    LaunchedEffect(key1 = uiState, block = {
-        commodityViewModel.initUiState()
-    })
+//    LaunchedEffect(key1 = uiState, block = {
+//        commodityViewModel.initUiState()
+//    })
 
 //    var carouselItems = remember {
 //        mutableStateOf(emptyList<Commodity>())

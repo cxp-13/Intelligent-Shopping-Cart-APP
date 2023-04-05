@@ -8,6 +8,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -16,13 +18,14 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.example.intelligent_shopping_cart.R
 import com.example.intelligent_shopping_cart.ui.screens.shopping_cart.mock.appraisesMock
+import com.example.intelligent_shopping_cart.view_model.CommodityUiState
 import com.example.intelligent_shopping_cart.view_model.CommodityViewModel
 
 @Composable
 fun CommodityDetailScreen(commodityViewModel: CommodityViewModel) {
 
 
-    val uiState = commodityViewModel.uiState
+    val uiState: State<CommodityUiState> = commodityViewModel.uiState.collectAsState()
     val commodity = uiState.value.selectedCommodity
 
 
