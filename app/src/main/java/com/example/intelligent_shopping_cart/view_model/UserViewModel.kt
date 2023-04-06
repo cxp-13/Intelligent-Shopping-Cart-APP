@@ -86,7 +86,6 @@ class UserViewModel @Inject constructor(val userRepository: UserRepository) : Vi
     private var _uiState = MutableStateFlow(UserUiState())
     val uiState: StateFlow<UserUiState> = _uiState.asStateFlow()
 
-
     init {
         viewModelScope.launch {
 //            val userList = UserFactory.createDummyUsers(5)

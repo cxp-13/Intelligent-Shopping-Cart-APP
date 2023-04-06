@@ -55,16 +55,14 @@ class CommodityViewModel @Inject constructor(private val commodityRepository: Co
     val uiState: StateFlow<CommodityUiState> = _uiState.asStateFlow()
 
     init {
-        initUiState()
-    }
-
-    private fun initUiState() {
         viewModelScope.launch {
-
+            // 创建一个包含 10 个虚拟商品的商品列表
             val commodityList = CommodityFactory.createDummyCommodities(10)
+            // 将该商品列表插入到数据库中
             commodityRepository.insertAll(commodityList)
+            // 获取所有商品，并使用 collect 操作符观察 LiveData 数据流
             commodityRepository.getAllCommodities().collect { commodities ->
-                Log.d("cxp", "collect: ")
+                // 更新 UI 状态
                 _uiState.value.commodities = commodities
                 _uiState.value.carouselItems = _uiState.value.commodities.subList(0, 5)
                 _uiState.value.placeCommodities = _uiState.value.commodities.subList(0, 5)
@@ -73,7 +71,6 @@ class CommodityViewModel @Inject constructor(private val commodityRepository: Co
                     it.price * it.count
                 }
             }
-            Log.d("cxp", "viewModelScope.launch: ${_uiState.value}")
         }
     }
 
@@ -85,13 +82,20 @@ class CommodityViewModel @Inject constructor(private val commodityRepository: Co
     private fun reducer(uiState: CommodityUiState, intent: CommodityIntent) {
         return when (intent) {
             is CommodityIntent.ChangeSearchBoxValue -> uiState.update {
-                copy(searchBoxValue = intent.searchBoxValue)
-                copy(displayCommodities = commoditiesForType.filter {
-                    searchBoxValue.isEmpty() || it.name.contains(searchBoxValue)
-                })
+                Log.d("reducer", "reducer: ${intent.searchBoxValue}")
+//                copy(searchBoxValue = )
+                copy(
+                    searchBoxValue = intent.searchBoxValue,
+                    displayCommodities = commoditiesForType.filter {
+                        intent.searchBoxValue.isEmpty() || it.name.contains(intent.searchBoxValue)
+                    })
             }
             is CommodityIntent.SelectType -> uiState.update {
-                copy(selectedType = intent.type)
+                copy(
+                    selectedType = intent.type,
+                    commoditiesForType = commodityTypeMap[intent.type]!!,
+                    displayCommodities = commodityTypeMap[intent.type]!!
+                )
             }
             is CommodityIntent.SelectCommodity -> uiState.update {
                 val commodity = commodities.find {

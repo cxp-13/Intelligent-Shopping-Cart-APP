@@ -37,20 +37,10 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-    override fun onStop() {
-        super.onStop()
-        Log.d("activity_status", "onStop: ")
-    }
-
-    override fun onPause() {
-        super.onPause()
-        Log.d("activity_status", "onPause: ")
-    }
-
-    @OptIn(ExperimentalAnimationApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false) // 设置沉浸式状态栏
+
         setContent {
             Intelligent_shopping_cartTheme {
                 val useDarkIcons = isSystemInDarkTheme()

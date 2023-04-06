@@ -15,17 +15,8 @@ import com.example.intelligent_shopping_cart.view_model.CommodityViewModel
 fun CommodityListScreen(
     viewModel: CommodityViewModel
 ) {
+
     val uiState by viewModel.uiState.collectAsState()
-
-//    val stateList: MutableState<List<Commodity>> = remember {
-//       mutableStateOf(uiState.commoditiesForType)
-//    }
-
-//    LaunchedEffect(key1 = uiState.searchBoxValue) {
-//        stateList.value = uiState.commoditiesForType.filter {
-//            uiState.searchBoxValue.isEmpty() || it.name.contains(uiState.searchBoxValue)
-//        }
-//    }
 
     DisposableEffect(key1 = Unit, effect = {
         onDispose {
