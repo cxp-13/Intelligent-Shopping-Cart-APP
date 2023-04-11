@@ -31,7 +31,7 @@ fun AppraiseItem(modifier: Modifier, appraise: Appraise) {
                 modifier = Modifier.padding(horizontal = 8.dp)
             ) {
                 Text(
-                    text = "user name",
+                    text = "user title",
                     style = MaterialTheme.typography.titleLarge
                 )
                 Text(

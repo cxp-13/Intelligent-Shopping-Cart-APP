@@ -60,6 +60,8 @@ object AppScreen {
     const val profileEdit = "profileEdit"
     const val commodityList = "commodityList"
     const val commodityDetail = "commodityDetail"
+    const val gaodeMap = "gaodeMap"
+    const val tencentMap = "tencentMap"
 }
 
 

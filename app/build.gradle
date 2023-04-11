@@ -101,6 +101,7 @@ dependencies {
     implementation "com.google.accompanist:accompanist-drawablepainter:$accompanist_version"
     implementation "com.google.accompanist:accompanist-swiperefresh:$accompanist_version"
     implementation "com.google.accompanist:accompanist-pager:$accompanist_version"
+    implementation "com.google.accompanist:accompanist-permissions:$accompanist_version"
 
     // coil
     implementation "io.coil-kt:coil-compose:2.2.2"
@@ -113,6 +114,18 @@ dependencies {
     implementation "com.google.dagger:hilt-android:2.44"
     kapt "com.google.dagger:hilt-compiler:2.44"
     implementation "androidx.hilt:hilt-navigation-compose:1.0.0"
+
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+//    Tencent map
+    implementation 'com.tencent.map:tencent-map-vector-sdk:4.5.12'
+    implementation 'com.tencent.map.geolocation:TencentLocationSdk-openplatform:7.3.0'
+//    高德
+    //3D地图so及jar
+    implementation 'com.amap.api:3dmap:9.6.0'
+    //定位功能
+//    implementation 'com.amap.api:location:latest.integration'
+    //搜索功能
+    implementation 'com.amap.api:search:9.5.0'
 }
 
 // Allow references to generated code

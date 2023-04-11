@@ -10,6 +10,7 @@ import com.example.intelligent_shopping_cart.logic.repository.UserRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ActivityContext
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
@@ -17,6 +18,14 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 @Module
 object AppModule {
+
+
+    @Provides
+    fun provideContext(@ActivityContext appContext: Context): Context {
+        return appContext
+    }
+
+
     @Provides
     @Singleton
     fun provideDatabase(@ApplicationContext appContext: Context) =
