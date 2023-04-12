@@ -13,7 +13,7 @@ import com.tencent.tencentmap.mapsdk.maps.LocationSource
 class TencentLocationSource(val context: Context) :
     LocationSource {
 
-    private lateinit var locationChangedListener: LocationSource.OnLocationChangedListener
+    private var locationChangedListener: LocationSource.OnLocationChangedListener? = null
 
 
     private var tencentLocationListener = object : TencentLocationListener {
@@ -30,7 +30,7 @@ class TencentLocationSource(val context: Context) :
                 //设置定位标的旋转角度，注意 tencentLocation.getBearing() 只有在 gps 时才有可能获取
                 location.bearing = tencentLocation.bearing
                 //将位置信息返回给地图
-                locationChangedListener.onLocationChanged(location)
+                locationChangedListener!!.onLocationChanged(location)
             }
         }
 
@@ -38,15 +38,15 @@ class TencentLocationSource(val context: Context) :
         }
     }
 
-    private var locationRequest: TencentLocationRequest = TencentLocationRequest.create()
+    private var locationRequest: TencentLocationRequest? = TencentLocationRequest.create()
 
-    var locationManager: TencentLocationManager = TencentLocationManager.getInstance(context)
+    var locationManager: TencentLocationManager? = TencentLocationManager.getInstance(context)
 
     init {
         //用于访问腾讯定位服务的类, 周期性向客户端提供位置更新
         //创建定位请求
         //设置定位周期（位置监听器回调周期）为3s
-        locationRequest.interval = 3000
+        locationRequest!!.interval = 3000
 
     }
 
@@ -55,7 +55,7 @@ class TencentLocationSource(val context: Context) :
         //这里我们将地图返回的位置监听保存为当前 Activity 的成员变量
         locationChangedListener = onLocationChangedListener
         //开启定位
-        val err = locationManager.requestLocationUpdates(
+        val err = locationManager!!.requestLocationUpdates(
             locationRequest, tencentLocationListener, Looper.myLooper()
         )
         when (err) {
@@ -78,9 +78,9 @@ class TencentLocationSource(val context: Context) :
 
     override fun deactivate() {
         //当不需要展示定位点时，需要停止定位并释放相关资源
-        locationManager.removeUpdates(tencentLocationListener);
-//        locationManager = null
-//        locationRequest = null
-//        locationChangedListener=null
+        locationManager?.removeUpdates(tencentLocationListener)
+        locationManager = null
+        locationRequest = null
+        locationChangedListener = null
     }
 }

@@ -4,8 +4,8 @@ import android.Manifest
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.CameraIndoor
-import androidx.compose.material.icons.rounded.MyLocation
 import androidx.compose.material.icons.rounded.Terrain
+import androidx.compose.material.icons.rounded.Traffic
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -71,23 +71,22 @@ fun TencentMap(tencentViewModel: TencentMapViewModel) {
     val uiState by tencentViewModel.uiState.collectAsState()
 
     val settings = listOf(
-        MapSetting("myLocation", uiState.isShowMyLocation, Icons.Rounded.MyLocation) {
+        MapSetting("traffic", uiState.isShowTraffic, Icons.Rounded.Traffic) {
             tencentViewModel.dispatch(
-                TencentMapIntent.ToggleMyLocation
+                TencentMapIntent.ToggleTraffic
             )
         },
-        MapSetting("indoor", uiState.isShowIndoorMap, Icons.Rounded.CameraIndoor) {
-            tencentViewModel.dispatch(
-                TencentMapIntent.ToggleIndoorMap
-            )
+        MapSetting(
+            "indoor",
+            uiState.isShowIndoorMap,
+            Icons.Rounded.CameraIndoor
+        ) {
+            tencentViewModel.dispatch(TencentMapIntent.ToggleIndoorMap)
         },
         MapSetting("3d", uiState.isShow3d, Icons.Rounded.Terrain) {
-            tencentViewModel.dispatch(
-                TencentMapIntent.Toggle3dMap
-            )
+            tencentViewModel.dispatch(TencentMapIntent.Toggle3dMap)
         }
     )
-
 
     val reqGPSPermission = requestMultiplePermission(
         permissions = listOf(
@@ -105,7 +104,7 @@ fun TencentMap(tencentViewModel: TencentMapViewModel) {
     MapLifecycle(uiState.mapView!!)
 
     Scaffold(
-        topBar = { CenterAlignedTopAppBar(title = { Text(text = "地图室内导航") }) }
+        topBar = { CenterAlignedTopAppBar(title = { Text(text = "Map indoor navigation") }) }
     ) { paddingValues ->
         Column(
             modifier = Modifier
@@ -129,7 +128,7 @@ fun TencentMap(tencentViewModel: TencentMapViewModel) {
                     FilterChipRow(settings, Modifier.fillMaxWidth())
                     Spacer(modifier = Modifier.height(16.dp))
                     // 地图图层选择
-                    Text(text = "地图图层选择")
+                    Text(text = "Map layer selection")
                     Row(modifier = Modifier.fillMaxWidth()) {
                         for (mapLayer in TencentMapLayer.values()) {
                             IconButton(
@@ -145,12 +144,11 @@ fun TencentMap(tencentViewModel: TencentMapViewModel) {
                                 Icon(
                                     imageVector = mapLayer.icon,
                                     contentDescription = null,
-                                    tint = if (uiState.mapType == mapLayer.type) Color.Blue else Color.Gray
+                                    tint = if (uiState.selectedMapType == mapLayer.type) Color.Blue else Color.Gray
                                 )
                             }
                         }
                     }
-                    Spacer(modifier = Modifier.height(16.dp))
                 }
             }
         }
