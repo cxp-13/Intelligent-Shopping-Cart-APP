@@ -88,8 +88,8 @@ class UserViewModel @Inject constructor(val userRepository: UserRepository) : Vi
 
     init {
         viewModelScope.launch {
-//            val userList = UserFactory.createDummyUsers(5)
-//            userRepository.insertAllUsers(userList)
+            val userList = UserFactory.createDummyUsers(5)
+            userRepository.insertAllUsers(userList)
             userRepository.getAllUsers().collect {
                 _uiState.value.users = it
             }

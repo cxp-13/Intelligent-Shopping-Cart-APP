@@ -58,20 +58,26 @@ class CommodityViewModel @Inject constructor(private val commodityRepository: Co
         viewModelScope.launch {
             // 创建一个包含 10 个虚拟商品的商品列表
             val commodityList = CommodityFactory.createDummyCommodities(10)
-            // 将该商品列表插入到数据库中
+
+            // 将商品列表插入到数据库中
             commodityRepository.insertAll(commodityList)
-            // 获取所有商品，并使用 collect 操作符观察 LiveData 数据流
-            commodityRepository.getAllCommodities().collect { commodities ->
-                // 更新 UI 状态
-                _uiState.value.commodities = commodities
-                _uiState.value.carouselItems = _uiState.value.commodities.subList(0, 5)
-                _uiState.value.placeCommodities = _uiState.value.commodities.subList(0, 5)
-                _uiState.value.commodityTypeMap = _uiState.value.commodities.groupBy { it.type }
-                _uiState.value.total = _uiState.value.placeCommodities.sumOf {
-                    it.price * it.count
+
+            // 从数据库中获取所有商品，并在获取到商品信息后更新 UI 状态
+            commodityRepository.getAllCommodities().collect { commoditiesValue ->
+                _uiState.value.update {
+                    // 检查商品列表的长度是否足够
+                    val subListSize = minOf(commoditiesValue.size, 5)
+                    copy(
+                        commodities = commoditiesValue,
+                        carouselItems = commoditiesValue.subList(0, subListSize),
+                        placeCommodities = commoditiesValue.subList(0, subListSize),
+                        commodityTypeMap = commoditiesValue.groupBy { it.type },
+                        total = placeCommodities.sumOf { it.price * it.count }
+                    )
                 }
             }
         }
+
     }
 
     private fun CommodityUiState.update(block: CommodityUiState.() -> CommodityUiState) {

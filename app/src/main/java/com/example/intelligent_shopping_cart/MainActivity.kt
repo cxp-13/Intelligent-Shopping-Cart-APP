@@ -79,7 +79,7 @@ fun ShoppingCartNavHost(
 ) {
     NavHost(
         navController = navController,
-        startDestination = AppScreen.tencentMap,
+        startDestination = AppScreen.home,
     ) {
         composable(
             AppScreen.tencentMap,

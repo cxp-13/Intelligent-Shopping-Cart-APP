@@ -2,28 +2,30 @@ package com.example.intelligent_shopping_cart.logic.repository
 
 import com.example.intelligent_shopping_cart.logic.dao.UserDao
 import com.example.intelligent_shopping_cart.model.User
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class UserRepository @Inject constructor(private val userDao: UserDao) {
 
-    fun getAllUsers(): Flow<List<User>> {
-        return userDao.getAll()
+    suspend fun getAllUsers(): Flow<List<User>> = withContext(Dispatchers.IO) {
+        userDao.getAll()
     }
 
-    fun getUserById(id: Int): User? {
-        return userDao.getById(id)
+    suspend fun getUserById(id: Int): Flow<User> = withContext(Dispatchers.IO) {
+        userDao.getById(id)
     }
 
-    fun insertUser(user: User) {
+    suspend fun insertUser(user: User) = withContext(Dispatchers.IO) {
         userDao.insert(user)
     }
 
-    fun deleteUser(user: User) {
+    suspend fun deleteUser(user: User) = withContext(Dispatchers.IO) {
         userDao.delete(user)
     }
 
-    suspend fun insertAllUsers(users: List<User>) {
+    suspend fun insertAllUsers(users: List<User>) = withContext(Dispatchers.IO) {
         userDao.insertAll(users)
     }
 }

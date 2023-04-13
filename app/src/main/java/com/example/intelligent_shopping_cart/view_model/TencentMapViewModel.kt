@@ -65,11 +65,7 @@ class TencentMapViewModel @Inject constructor(@ApplicationContext private val co
 
     var uiState: StateFlow<TencentMapUiState> = _uiState.asStateFlow()
 
-
-//    private val _effect: Channel<String> = Channel()
-//    val effect = _effect
-
-    private val event: MutableSharedFlow<TencentMapIntent> = MutableSharedFlow()
+    private val event: MutableSharedFlow<TencentMapIntent> = MutableSharedFlow<TencentMapIntent>()
 
     private var tencentLocationSource: TencentLocationSource = TencentLocationSource(context)
 
@@ -77,6 +73,10 @@ class TencentMapViewModel @Inject constructor(@ApplicationContext private val co
         _uiState.value.apply {
             tencentMap = mapView!!.map
             uiSettings = tencentMap!!.uiSettings
+
+
+//            val mTencentMapOptions = TencentMapOptions()
+//            mTencentMapOptions.mapKey = "apiKey"
 
             uiSettings!!.run {
                 isCompassEnabled = true
@@ -97,6 +97,10 @@ class TencentMapViewModel @Inject constructor(@ApplicationContext private val co
             event.collect {
                 reducer(_uiState.value, intent = it)
             }
+//            val intent = event.receive()
+//            for (intent in event) {
+//                reducer(_uiState.value, intent)
+//            }
         }
     }
 
@@ -107,27 +111,38 @@ class TencentMapViewModel @Inject constructor(@ApplicationContext private val co
     fun dispatch(intent: TencentMapIntent) {
         viewModelScope.launch(Dispatchers.Main) {
             event.emit(intent)
+//            event.send(intent)
         }
     }
 
+    // 更新 Tencent 地图 UI 状态的 reducer 函数
     private fun reducer(uiState: TencentMapUiState, intent: TencentMapIntent) {
         when (intent) {
             TencentMapIntent.ToggleTraffic -> update {
+                // 切换交通流量显示
                 tencentMap!!.isTrafficEnabled = !tencentMap!!.isTrafficEnabled
+                // 更新状态中的 isShowTraffic 属性
                 copy(isShowTraffic = !isShowTraffic)
             }
             TencentMapIntent.ToggleIndoorMap -> update {
+                // 切换室内地图显示
                 tencentMap!!.setIndoorEnabled(!isShowIndoorMap)
+                // 更新状态中的 isShowIndoorMap 属性
                 copy(isShowIndoorMap = !isShowIndoorMap)
             }
             is TencentMapIntent.ToggleMapType -> update {
+                // 切换地图类型
                 tencentMap!!.mapType = intent.type
+                // 更新状态中的 selectedMapType 属性
                 copy(selectedMapType = intent.type)
             }
             TencentMapIntent.Toggle3dMap -> update {
+                // 切换 3D 地图显示
                 tencentMap!!.setBuilding3dEffectEnable(!isShow3d)
+                // 更新状态中的 isShow3d 属性
                 copy(isShow3d = !isShow3d)
             }
         }
     }
+
 }

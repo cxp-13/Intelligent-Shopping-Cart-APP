@@ -12,16 +12,16 @@ interface UserDao {
     fun getAll(): Flow<List<User>>
 
     @Query("SELECT * FROM user WHERE id = :id")
-    fun getById(id: Int): User?
+    fun getById(id: Int): Flow<User>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(user: User)
+    suspend fun insert(user: User)
 
     @Update
-    fun update(user: User)
+    suspend fun update(user: User)
 
     @Delete
-    fun delete(user: User)
+    suspend fun delete(user: User)
 
     @Insert
     suspend fun insertAll(users: List<User>)

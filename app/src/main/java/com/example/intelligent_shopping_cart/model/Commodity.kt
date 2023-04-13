@@ -18,5 +18,6 @@ data class Commodity(
 //    val appraise: List<Appraise> = emptyList(), // 商品评价列表
     val count: Int = 0, // 商品数量
     val type: String = "type null", //商品类别
+
 )
 

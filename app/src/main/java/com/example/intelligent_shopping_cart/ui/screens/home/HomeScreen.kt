@@ -1,6 +1,5 @@
 package com.example.intelligent_shopping_cart.ui.screens.home
 
-import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -21,25 +20,6 @@ fun HomeScreen(drawerState: DrawerState, commodityViewModel: CommodityViewModel)
 
     val navHostController = LocalNavController.current
     val uiState by commodityViewModel.uiState.collectAsState()
-
-//    LaunchedEffect(key1 = uiState, block = {
-//        commodityViewModel.initUiState()
-//    })
-
-//    var carouselItems = remember {
-//        mutableStateOf(emptyList<Commodity>())
-//    }
-
-//    LaunchedEffect(uiState) {
-//         commodityViewModel.getAll().collect{
-//             carouselItems.value = it.subList(0, 5)
-//        }
-//    }
-
-
-    LaunchedEffect(key1 = uiState, block = {
-        Log.d("cxp", "HomeScreen: ${uiState.carouselItems}")
-    })
 
     Scaffold(
         topBar = {
