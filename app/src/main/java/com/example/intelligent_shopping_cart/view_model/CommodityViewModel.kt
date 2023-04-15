@@ -44,7 +44,6 @@ data class CommodityUiState(
 sealed class CommodityIntent() {
     data class ChangeSearchBoxValue(var searchBoxValue: String) : CommodityIntent()
     data class SelectType(val type: String) : CommodityIntent()
-
     data class SelectCommodity(val id: Int) : CommodityIntent()
 }
 

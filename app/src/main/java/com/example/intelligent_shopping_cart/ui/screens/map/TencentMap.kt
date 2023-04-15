@@ -1,26 +1,27 @@
 package com.example.intelligent_shopping_cart.ui.screens.map
 
 import android.Manifest
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.CameraIndoor
 import androidx.compose.material.icons.rounded.Terrain
 import androidx.compose.material.icons.rounded.Traffic
-import androidx.compose.material3.*
+import androidx.compose.material3.BottomSheetScaffold
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
-import com.example.intelligent_shopping_cart.ui.components.FilterChipRow
 import com.example.intelligent_shopping_cart.utils.requestMultiplePermission
 import com.example.intelligent_shopping_cart.view_model.TencentMapIntent
-import com.example.intelligent_shopping_cart.view_model.TencentMapLayer
 import com.example.intelligent_shopping_cart.view_model.TencentMapViewModel
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.tencent.tencentmap.mapsdk.maps.MapView
@@ -55,7 +56,6 @@ private fun MapView.lifecycleObserver(): LifecycleEventObserver =
         }
     }
 
-
 data class MapSetting(
     val name: String,
     val status: Boolean,
@@ -63,12 +63,14 @@ data class MapSetting(
     val changeStatus: () -> Unit
 )
 
-
 @OptIn(ExperimentalPermissionsApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun TencentMap(tencentViewModel: TencentMapViewModel) {
 
+
     val uiState by tencentViewModel.uiState.collectAsState()
+
+    val scaffoldState = rememberBottomSheetScaffoldState()
 
     val settings = listOf(
         MapSetting("traffic", uiState.isShowTraffic, Icons.Rounded.Traffic) {
@@ -95,62 +97,69 @@ fun TencentMap(tencentViewModel: TencentMapViewModel) {
         ),
     )
 
+
     LaunchedEffect(key1 = reqGPSPermission) {
         if (!reqGPSPermission.allPermissionsGranted) {
             reqGPSPermission.launchMultiplePermissionRequest()
         }
     }
 
-    MapLifecycle(uiState.mapView!!)
+    MapLifecycle(uiState.mapView)
 
-    Scaffold(
-        topBar = { CenterAlignedTopAppBar(title = { Text(text = "Map indoor navigation") }) }
-    ) { paddingValues ->
+    BottomSheetScaffold(
+        scaffoldState = scaffoldState,
+        sheetContent = {
+            WalkPlanCard(result = uiState.route)
+
+//            // 设置部分
+//            Card(
+//                modifier = Modifier
+//                    .fillMaxWidth()
+//                    .padding(16.dp),
+//                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+//            ) {
+//                Column(modifier = Modifier.padding(16.dp)) {
+//                    FilterChipRow(settings, Modifier.fillMaxWidth())
+//                    Spacer(modifier = Modifier.height(16.dp))
+//                    // 地图图层选择
+//                    Text(text = "Map layer selection")
+//                    Row(modifier = Modifier.fillMaxWidth()) {
+//                        for (mapLayer in TencentMapLayer.values()) {
+//                            IconButton(
+//                                onClick = {
+//                                    tencentViewModel.dispatch(
+//                                        TencentMapIntent.ToggleMapType(
+//                                            mapLayer.type
+//                                        )
+//                                    )
+//                                },
+//                                modifier = Modifier.weight(1f)
+//                            ) {
+//                                Icon(
+//                                    imageVector = mapLayer.icon,
+//                                    contentDescription = null,
+//                                    tint = if (uiState.selectedMapType == mapLayer.type) Color.Blue else Color.Gray
+//                                )
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+        }
+    ) { innerPadding ->
         Column(
             modifier = Modifier
-                .padding(paddingValues)
+                .padding(innerPadding)
                 .fillMaxSize()
         ) {
             // 地图控件
             Box(Modifier.weight(1f)) {
                 AndroidView(modifier = Modifier.fillMaxSize(), factory = {
-                    uiState.mapView!!
+                    uiState.mapView
                 })
-            }
-            // 设置部分
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
-            ) {
-                Column(modifier = Modifier.padding(16.dp)) {
-                    FilterChipRow(settings, Modifier.fillMaxWidth())
-                    Spacer(modifier = Modifier.height(16.dp))
-                    // 地图图层选择
-                    Text(text = "Map layer selection")
-                    Row(modifier = Modifier.fillMaxWidth()) {
-                        for (mapLayer in TencentMapLayer.values()) {
-                            IconButton(
-                                onClick = {
-                                    tencentViewModel.dispatch(
-                                        TencentMapIntent.ToggleMapType(
-                                            mapLayer.type
-                                        )
-                                    )
-                                },
-                                modifier = Modifier.weight(1f)
-                            ) {
-                                Icon(
-                                    imageVector = mapLayer.icon,
-                                    contentDescription = null,
-                                    tint = if (uiState.selectedMapType == mapLayer.type) Color.Blue else Color.Gray
-                                )
-                            }
-                        }
-                    }
-                }
             }
         }
     }
 }
+
+

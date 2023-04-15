@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -17,7 +18,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.example.intelligent_shopping_cart.R
+import com.example.intelligent_shopping_cart.ui.components.AppScreen
 import com.example.intelligent_shopping_cart.ui.screens.shopping_cart.mock.appraisesMock
+import com.example.intelligent_shopping_cart.utils.LocalNavController
 import com.example.intelligent_shopping_cart.view_model.CommodityUiState
 import com.example.intelligent_shopping_cart.view_model.CommodityViewModel
 
@@ -27,6 +30,8 @@ fun CommodityDetailScreen(commodityViewModel: CommodityViewModel) {
 
     val uiState: State<CommodityUiState> = commodityViewModel.uiState.collectAsState()
     val commodity = uiState.value.selectedCommodity
+
+    val navHostController = LocalNavController.current
 
 
     val scrollState = rememberScrollState()
@@ -46,6 +51,11 @@ fun CommodityDetailScreen(commodityViewModel: CommodityViewModel) {
                     .aspectRatio(1f)
                     .clip(RoundedCornerShape(16.dp))
             )
+            Button(onClick = {
+                navHostController.navigate("${AppScreen.tencentMap}/${commodity.id}")
+            }) {
+                Text(text = "route")
+            }
             Text(
                 text = stringResource(id = R.string.commodity_name, commodity.name),
                 style = MaterialTheme.typography.titleLarge,

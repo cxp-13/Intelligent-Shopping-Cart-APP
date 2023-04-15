@@ -13,8 +13,12 @@ class CommodityRepository @Inject constructor(
     suspend fun getAllCommodities(): Flow<List<Commodity>> =
         withContext(Dispatchers.IO) {
             commodityDao.getAllCommodities()
-
         }
+
+    // 根据 id 查找单个 Commodity 对象
+    suspend fun getCommodityById(id: Int): Flow<Commodity?> = withContext(Dispatchers.IO) {
+        commodityDao.getCommodityById(id)
+    }
 
     suspend fun insertCommodity(commodity: Commodity) = withContext(Dispatchers.IO) {
         commodityDao.insertCommodity(commodity)

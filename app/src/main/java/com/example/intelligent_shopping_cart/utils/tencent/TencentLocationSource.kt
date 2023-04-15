@@ -47,7 +47,6 @@ class TencentLocationSource(val context: Context) :
         //创建定位请求
         //设置定位周期（位置监听器回调周期）为3s
         locationRequest!!.interval = 3000
-
     }
 
 

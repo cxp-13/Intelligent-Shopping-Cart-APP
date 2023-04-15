@@ -1,6 +1,7 @@
 package com.example.intelligent_shopping_cart.utils.tencent
 
 import com.example.intelligent_shopping_cart.R
+import com.example.intelligent_shopping_cart.logic.utils.CURRENT_LOCATION
 import com.example.intelligent_shopping_cart.model.Mark
 import com.tencent.tencentmap.mapsdk.maps.TencentMap
 import com.tencent.tencentmap.mapsdk.maps.model.BitmapDescriptorFactory
@@ -18,7 +19,6 @@ val supermarketMarksList = listOf(
 )
 
 class MarkerGenerator(var tencentMap: TencentMap) {
-
     // 生成随机数量的标记点
     fun generateMarkers(
         supermarketMarks: List<Mark> = supermarketMarksList
@@ -35,7 +35,7 @@ class MarkerGenerator(var tencentMap: TencentMap) {
     private fun getCurrentLocation(): LatLng {
 //        val myLocation = tencentMap.myLocation
 //        return LatLng(myLocation.latitude, myLocation.longitude)
-        return LatLng(34.383392, 108.980198)
+        return CURRENT_LOCATION
     }
 
     // 生成随机经纬度

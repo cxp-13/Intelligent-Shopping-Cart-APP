@@ -18,14 +18,10 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 @Module
 object AppModule {
-
-
     @Provides
     fun provideContext(@ActivityContext appContext: Context): Context {
         return appContext
     }
-
-
     @Provides
     @Singleton
     fun provideDatabase(@ApplicationContext appContext: Context) =

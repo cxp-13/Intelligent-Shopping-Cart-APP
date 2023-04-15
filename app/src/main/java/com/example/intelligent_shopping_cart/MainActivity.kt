@@ -71,7 +71,6 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-
 @Composable
 fun ShoppingCartNavHost(
     navController: NavHostController,
@@ -82,11 +81,31 @@ fun ShoppingCartNavHost(
         startDestination = AppScreen.home,
     ) {
         composable(
-            AppScreen.tencentMap,
-        ) {
+            route = "${AppScreen.tencentMap}/{commodityId}",
+            arguments = listOf(navArgument("commodityId") {
+                type = NavType.IntType
+            })
+        ) { backStackEntry ->
             val tencentMapViewModel: TencentMapViewModel = hiltViewModel()
+            val commodityId = backStackEntry.arguments?.getInt("commodityId")
+            tencentMapViewModel.dispatch(
+                TencentMapIntent.LoadingWalkPlan(
+                    commodityId = commodityId ?: 1
+                )
+            )
             TencentMap(tencentMapViewModel)
         }
+//        composable(
+//            route = "test"
+//        ) {
+//            val tencentMapViewModel: TencentMapViewModel = hiltViewModel()
+//            tencentMapViewModel.dispatch(
+//                TencentMapIntent.LoadingWalkPlan(
+//                    commodityId = 3
+//                )
+//            )
+//            TencentMap(tencentMapViewModel)
+//        }
         composable(
             AppScreen.gaodeMap,
         ) {

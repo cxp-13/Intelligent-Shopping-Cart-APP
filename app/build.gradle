@@ -70,6 +70,16 @@ dependencies {
 //    viewmodel
     implementation 'androidx.lifecycle:lifecycle-viewmodel-compose:2.6.1'
 
+//    retrofit
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0' // Retrofit 框架的核心包，提供了 HTTP 请求和响应的处理功能
+    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
+    // 提供了 Retrofit 框架和 Gson 库之间的转换器，用于将请求和响应的 JSON 数据与 Java 对象之间进行转换
+    implementation 'com.squareup.okhttp3:okhttp:3.14.9'
+    // OkHttpClient 是 Retrofit 框架的默认 HTTP 客户端，用于发送和接收 HTTP 请求和响应
+    implementation 'com.squareup.okhttp3:logging-interceptor:3.14.9'
+    // 提供了一个 OkHttp 拦截器，用于在调试时输出 HTTP 请求和响应的日志信息
+
+
 //room
     def room_version = "2.5.1"
 
@@ -118,7 +128,7 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 //    Tencent map
     implementation 'com.tencent.map:tencent-map-vector-sdk:4.5.12'
-    implementation 'com.tencent.map.geolocation:TencentLocationSdk-openplatform:7.3.0'
+    implementation 'com.tencent.map.geolocation:TencentLocationSdk-openplatform:7.5.0'
 //    高德
     //3D地图so及jar
     implementation 'com.amap.api:3dmap:9.6.0'

@@ -1,5 +1,6 @@
 package com.example.intelligent_shopping_cart.utils
 
+import com.tencent.map.geolocation.TencentLocationManager
 import com.tencent.tencentmap.mapsdk.maps.TencentMapInitializer
 
 object TencentMapUtils {
@@ -9,6 +10,7 @@ object TencentMapUtils {
      * @param isAgree 是否同意隐私协议
      */
     fun setAgreePrivacy() {
+        TencentLocationManager.setUserAgreePrivacy(true)
         TencentMapInitializer.setAgreePrivacy(true)
     }
 

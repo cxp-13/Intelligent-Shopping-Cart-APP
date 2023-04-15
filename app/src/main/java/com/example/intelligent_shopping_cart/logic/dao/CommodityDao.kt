@@ -9,6 +9,9 @@ interface CommodityDao {
     @Query("SELECT * FROM commodity")
     fun getAllCommodities(): Flow<List<Commodity>>
 
+    @Query("SELECT * FROM commodity WHERE id = :id")
+    fun getCommodityById(id: Int): Flow<Commodity?>
+
     @Insert
     suspend fun insertCommodity(commodity: Commodity)
 

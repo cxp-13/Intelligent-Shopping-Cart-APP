@@ -1,6 +1,7 @@
 package com.example.intelligent_shopping_cart.view_model
 
 import android.content.Context
+import android.util.Log
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Navigation
 import androidx.compose.material.icons.rounded.Nightlife
@@ -8,10 +9,16 @@ import androidx.compose.material.icons.rounded.Satellite
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.intelligent_shopping_cart.logic.repository.CommodityRepository
+import com.example.intelligent_shopping_cart.model.Commodity
 import com.example.intelligent_shopping_cart.utils.tencent.TencentLocationSource
+import com.example.intelligent_shopping_cart.utils.tencent.WalkPlanningGenerator
+import com.tencent.lbssearch.`object`.result.WalkingResultObject.Route
 import com.tencent.tencentmap.mapsdk.maps.MapView
 import com.tencent.tencentmap.mapsdk.maps.TencentMap
 import com.tencent.tencentmap.mapsdk.maps.UiSettings
+import com.tencent.tencentmap.mapsdk.maps.model.LatLng
+import com.tencent.tencentmap.mapsdk.maps.model.MyLocationStyle
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
@@ -30,13 +37,15 @@ enum class TencentMapLayer(val type: Int, val title: String, val icon: ImageVect
 }
 
 data class TencentMapUiState(
-    val mapView: MapView?,
-    var uiSettings: UiSettings?,
+    val mapView: MapView,
+    val uiSettings: UiSettings?,
     val isShowIndoorMap: Boolean,
     val isShow3d: Boolean,
     val isShowTraffic: Boolean,
     val selectedMapType: Int,
-    var tencentMap: TencentMap?,
+    val tencentMap: TencentMap?,
+    val selectedCommodity: Commodity?,
+    val route: Route?
 )
 
 sealed class TencentMapIntent {
@@ -44,11 +53,14 @@ sealed class TencentMapIntent {
     data class ToggleMapType(val type: Int) : TencentMapIntent()
     object ToggleIndoorMap : TencentMapIntent()
     object Toggle3dMap : TencentMapIntent()
+    data class LoadingWalkPlan(val commodityId: Int) : TencentMapIntent()
 }
 
 @HiltViewModel
-class TencentMapViewModel @Inject constructor(@ApplicationContext private val context: Context) :
-    ViewModel() {
+class TencentMapViewModel @Inject constructor(
+    @ApplicationContext context: Context,
+    val commodityRepository: CommodityRepository,
+) : ViewModel() {
 
     private val _uiState: MutableStateFlow<TencentMapUiState> =
         MutableStateFlow(
@@ -59,48 +71,46 @@ class TencentMapViewModel @Inject constructor(@ApplicationContext private val co
                 isShow3d = false,
                 isShowTraffic = false,
                 selectedMapType = TencentMap.MAP_TYPE_NORMAL,
-                tencentMap = null
+                tencentMap = null,
+                selectedCommodity = null,
+                route = null
             )
         )
 
     var uiState: StateFlow<TencentMapUiState> = _uiState.asStateFlow()
 
-    private val event: MutableSharedFlow<TencentMapIntent> = MutableSharedFlow<TencentMapIntent>()
+    private val event: MutableSharedFlow<TencentMapIntent> = MutableSharedFlow()
 
     private var tencentLocationSource: TencentLocationSource = TencentLocationSource(context)
 
     init {
-        _uiState.value.apply {
-            tencentMap = mapView!!.map
-            uiSettings = tencentMap!!.uiSettings
-
-
-//            val mTencentMapOptions = TencentMapOptions()
-//            mTencentMapOptions.mapKey = "apiKey"
-
-            uiSettings!!.run {
-                isCompassEnabled = true
-            }
-
-            tencentMap!!.run {
+        update {
+            copy(tencentMap = mapView.map.apply {
+                setMyLocationStyle(MyLocationStyle().myLocationType(MyLocationStyle.LOCATION_TYPE_FOLLOW_NO_CENTER))
+                Log.d("checkTime", "init")
                 setLocationSource(tencentLocationSource)
                 uiSettings.isMyLocationButtonEnabled = true//设置默认定位按钮是否显示，非必需设置。
                 isMyLocationEnabled = true // 设置为true表示启动显示定位蓝点，false表示隐藏定位蓝点并不进行定位，默认是false。
+
                 //开启多窗口模式
                 enableMultipleInfowindow(true)
-            }
-//            MarkerGenerator(tencentMap!!).generateMarkers()
-//            PolylineGenerator(tencentMap!!).generatePolyline()
+
+            })
+        }
+
+        update {
+            copy(uiSettings = tencentMap!!.uiSettings.apply {
+                isCompassEnabled = true
+            })
         }
 
         viewModelScope.launch(Dispatchers.Main) {
+
+//            loadCommodity()
+
             event.collect {
                 reducer(_uiState.value, intent = it)
             }
-//            val intent = event.receive()
-//            for (intent in event) {
-//                reducer(_uiState.value, intent)
-//            }
         }
     }
 
@@ -112,6 +122,35 @@ class TencentMapViewModel @Inject constructor(@ApplicationContext private val co
         viewModelScope.launch(Dispatchers.Main) {
             event.emit(intent)
 //            event.send(intent)
+        }
+    }
+
+    private suspend fun loadCommodity(commodityId: Int) {
+        commodityRepository.getCommodityById(commodityId).collect {
+            update {
+                copy(selectedCommodity = it)
+            }
+            val tencentMap = _uiState.value.tencentMap
+
+            tencentMap!!.setOnMyLocationChangeListener { location ->
+
+                val fromPoint = LatLng(location.latitude, location.longitude)
+
+                val toPoint =
+                    LatLng(
+                        _uiState.value.selectedCommodity!!.latitude,
+                        _uiState.value.selectedCommodity!!.longitude
+                    )
+
+                WalkPlanningGenerator(_uiState.value.tencentMap!!).getWalkingRoute(
+                    fromPoint,
+                    toPoint
+                ) {
+                    update {
+                        copy(route = it)
+                    }
+                }
+            }
         }
     }
 
@@ -141,6 +180,11 @@ class TencentMapViewModel @Inject constructor(@ApplicationContext private val co
                 tencentMap!!.setBuilding3dEffectEnable(!isShow3d)
                 // 更新状态中的 isShow3d 属性
                 copy(isShow3d = !isShow3d)
+            }
+            is TencentMapIntent.LoadingWalkPlan -> {
+                viewModelScope.launch {
+                    loadCommodity(intent.commodityId)
+                }
             }
         }
     }
