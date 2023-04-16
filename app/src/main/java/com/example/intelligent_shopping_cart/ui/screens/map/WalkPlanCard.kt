@@ -3,6 +3,7 @@ package com.example.intelligent_shopping_cart.ui.screens.map
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
@@ -83,6 +84,7 @@ fun RowScope.WalkPlanCardItem(icon: ImageVector, title: String, value: String) {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun WalkPlanStepItem(step: RoutePlanningObject.Step) {
     Column(modifier = Modifier.fillMaxWidth()) {
@@ -93,12 +95,47 @@ fun WalkPlanStepItem(step: RoutePlanningObject.Step) {
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.primary
         )
-        Text(
-            text = "${step.distance} meters, ${step.instruction}, ${step.act_desc}, ${step.dir_desc}",
+        Card(
             modifier = Modifier.padding(16.dp),
-            style = MaterialTheme.typography.bodyLarge,
-            color = Color.Gray
-        )
+            shape = RoundedCornerShape(4.dp)
+        ) {
+            Row(
+                modifier = Modifier.padding(16.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Badge() {
+                    Box(
+                        modifier = Modifier.size(24.dp),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        Text(
+                            text = step.distance.toString(),
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = Color.White,
+                            modifier = Modifier.padding(4.dp)
+                        )
+                    }
+                }
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = step.instruction,
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = Color.Gray
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = step.act_desc,
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = Color.Gray
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = step.dir_desc,
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = Color.Gray
+                )
+            }
+        }
         Divider(modifier = Modifier.fillMaxWidth())
     }
 }

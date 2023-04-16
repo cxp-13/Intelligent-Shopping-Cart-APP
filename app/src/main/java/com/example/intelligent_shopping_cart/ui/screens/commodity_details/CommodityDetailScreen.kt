@@ -2,28 +2,21 @@ package com.example.intelligent_shopping_cart.ui.screens.commodity_details
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Button
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Route
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
-import com.example.intelligent_shopping_cart.R
 import com.example.intelligent_shopping_cart.ui.components.AppScreen
-import com.example.intelligent_shopping_cart.ui.screens.shopping_cart.mock.appraisesMock
 import com.example.intelligent_shopping_cart.utils.LocalNavController
 import com.example.intelligent_shopping_cart.view_model.CommodityUiState
 import com.example.intelligent_shopping_cart.view_model.CommodityViewModel
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CommodityDetailScreen(commodityViewModel: CommodityViewModel) {
 
@@ -36,84 +29,38 @@ fun CommodityDetailScreen(commodityViewModel: CommodityViewModel) {
 
     val scrollState = rememberScrollState()
 
-    Surface() {
+    Scaffold(
+        contentWindowInsets = WindowInsets(0.dp),
+        topBar = {
+            CenterAlignedTopAppBar(title = {
+                Text(text = "Commodity Detail")
+            })
+        },
+        floatingActionButton = {
+            ExtendedFloatingActionButton(onClick = { navHostController.navigate("${AppScreen.tencentMap}/${commodity!!.id}") }) {
+                Icon(Icons.Rounded.Route, contentDescription = null)
+                Text(text = "route")
+
+            }
+        }
+    ) { innerPadding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
+                .padding(paddingValues = innerPadding)
                 .padding(horizontal = 16.dp)
                 .verticalScroll(scrollState)
         ) {
-            AsyncImage(
-                model = commodity!!.img,
-                contentDescription = null,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .aspectRatio(1f)
-                    .clip(RoundedCornerShape(16.dp))
-            )
-            Button(onClick = {
-                navHostController.navigate("${AppScreen.tencentMap}/${commodity.id}")
-            }) {
-                Text(text = "route")
+            ElevatedCard(shape = MaterialTheme.shapes.extraLarge) {
+                CommodityImage(imageUrl = commodity!!.img)
+                Spacer(modifier = Modifier.height(10.dp))
+                CommodityInfo(commodity = commodity)
             }
-            Text(
-                text = stringResource(id = R.string.commodity_name, commodity.name),
-                style = MaterialTheme.typography.titleLarge,
-                modifier = Modifier.padding(vertical = 16.dp)
-            )
-            Text(
-                text = stringResource(id = R.string.commodity_price, commodity.price),
-                style = MaterialTheme.typography.bodyMedium,
-                modifier = Modifier.padding(bottom = 8.dp)
-            )
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(
-                    text = stringResource(id = R.string.commodity_origin, commodity.origin),
-                    style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier.weight(1f)
-                )
-                Text(
-                    text = stringResource(id = R.string.commodity_brand, commodity.brand),
-                    style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier.weight(1f)
-                )
-            }
-            Text(
-                text = stringResource(
-                    id = R.string.commodity_specification,
-                    commodity.specification
-                ),
-                style = MaterialTheme.typography.bodyMedium,
-                modifier = Modifier.padding(bottom = 8.dp)
-            )
-            Text(
-                text = stringResource(id = R.string.commodity_shelf_life, commodity.shelfLife),
-                style = MaterialTheme.typography.bodyMedium,
-                modifier = Modifier.padding(bottom = 16.dp)
-            )
-            Text(
-                text = stringResource(id = R.string.commodity_description, commodity.description),
-                style = MaterialTheme.typography.bodyMedium,
-                modifier = Modifier.padding(bottom = 16.dp)
-            )
-            Text(
-                text = stringResource(id = R.string.user_reviews),
-                style = MaterialTheme.typography.headlineSmall,
-                modifier = Modifier.padding(bottom = 8.dp)
-            )
-            if (appraisesMock.isNotEmpty()) {
-                Column() {
-                    appraisesMock.forEach { appraise ->
-                        AppraiseItem(Modifier.padding(10.dp), appraise)
-                    }
-                }
-            } else {
-                Text(
-                    text = stringResource(id = R.string.no_views),
-                    style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier.padding(bottom = 16.dp)
-                )
-            }
+
+            Spacer(modifier = Modifier.height(5.dp))
+            UserReviews()
+
+
         }
     }
 

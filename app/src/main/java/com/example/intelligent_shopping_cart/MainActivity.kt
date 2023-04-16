@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -37,6 +38,7 @@ import dagger.hilt.android.AndroidEntryPoint
 // 指示该 Activity 应该作为入口点被 Hilt 用于依赖注入
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+    @OptIn(ExperimentalAnimationApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         // 设置 Activity 使用全屏沉浸模式，没有系统 UI 元素可见
@@ -59,6 +61,8 @@ class MainActivity : ComponentActivity() {
                 }
                 // 创建一个 NavController 实例，可用于在应用程序中的不同屏幕之间导航
                 val navController = rememberNavController()
+                // 动画
+//                val navAnimatedController = rememberAnimatedNavController()
                 // 将 NavController 实例提供给子组件
                 CompositionLocalProvider(
                     LocalNavController provides navController,
@@ -71,6 +75,7 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun ShoppingCartNavHost(
     navController: NavHostController,
@@ -78,7 +83,7 @@ fun ShoppingCartNavHost(
 ) {
     NavHost(
         navController = navController,
-        startDestination = AppScreen.home,
+        startDestination = AppScreen.login,
     ) {
         composable(
             route = "${AppScreen.tencentMap}/{commodityId}",

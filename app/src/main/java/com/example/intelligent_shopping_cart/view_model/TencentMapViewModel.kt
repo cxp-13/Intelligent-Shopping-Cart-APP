@@ -14,10 +14,12 @@ import com.example.intelligent_shopping_cart.model.Commodity
 import com.example.intelligent_shopping_cart.utils.tencent.TencentLocationSource
 import com.example.intelligent_shopping_cart.utils.tencent.WalkPlanningGenerator
 import com.tencent.lbssearch.`object`.result.WalkingResultObject.Route
+import com.tencent.tencentmap.mapsdk.maps.CameraUpdateFactory
 import com.tencent.tencentmap.mapsdk.maps.MapView
 import com.tencent.tencentmap.mapsdk.maps.TencentMap
 import com.tencent.tencentmap.mapsdk.maps.UiSettings
 import com.tencent.tencentmap.mapsdk.maps.model.LatLng
+import com.tencent.tencentmap.mapsdk.maps.model.LatLngBounds
 import com.tencent.tencentmap.mapsdk.maps.model.MyLocationStyle
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -146,11 +148,21 @@ class TencentMapViewModel @Inject constructor(
                     fromPoint,
                     toPoint
                 ) {
+
                     update {
                         copy(route = it)
                     }
+
+                    tencentMap.moveCamera(
+                        CameraUpdateFactory.newLatLngBounds(
+                            LatLngBounds.builder()
+                                .include(_uiState.value.route!!.polyline).build(), 100
+                        )
+                    )
                 }
             }
+
+
         }
     }
 
